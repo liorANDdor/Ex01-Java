@@ -1,6 +1,6 @@
 package UI;
 
-import model.SystemManager;
+import SDMModel.SystemManager;
 
 import java.util.Scanner;
 
