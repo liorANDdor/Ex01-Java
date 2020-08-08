@@ -79,7 +79,7 @@ public class SuperMarketUI {
         System.out.println("Please enter full path of your XML file.");
         String fullPath = scanner.nextLine();
         systemManager.LoadXMLFileAndCheckIt(fullPath);
-        if(systemManager.isXMLFileLoaded())
+        if(systemManager.isXmlLoaded())
             System.out.println("Loadeded successfully");
         else
             System.out.println("Not loadeded successfully");

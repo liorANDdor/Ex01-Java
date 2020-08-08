@@ -19,7 +19,8 @@ public class SystemManager {
         }
     }
 
-    public boolean isXMLFileLoaded() {
+    public boolean isXmlLoaded() {
         return isXmlLoaded;
     }
+
 }
