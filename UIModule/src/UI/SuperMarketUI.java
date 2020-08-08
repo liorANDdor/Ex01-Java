@@ -1,10 +1,13 @@
+package UI;
 
+import model.SystemManager;
 
 import java.util.Scanner;
 
 public class SuperMarketUI {
 
     private SystemManager systemManager = new SystemManager();
+    private Scanner scanner = new Scanner(System.in);
 
     public enum eMainMenu {
         LoadFile,
@@ -18,7 +21,6 @@ public class SuperMarketUI {
     private  eMainMenu handleSelection(int length) {
         String userSelectionAsString;
         Integer userSelectionAsInt = 0;
-        Scanner scanner = new Scanner(System.in);
         boolean validOption = false;
         do {
             userSelectionAsString = scanner.nextLine();
@@ -58,7 +60,7 @@ public class SuperMarketUI {
                     System.out.println("Items");
                     break;
                 case CreateAnOrder:
-                    System.out.println("Order");
+                    createOrder();
                     break;
                 case ShowHistory:
                     System.out.println("history");
@@ -69,8 +71,14 @@ public class SuperMarketUI {
 
     }
 
+    private void createOrder() {
+
+    }
+
     private void loadXMLFile() {
-        systemManager.LoadXMLFile();
+        System.out.println("Please enter full path of your XML file.");
+        String fullPath = scanner.nextLine();
+        systemManager.LoadXMLFileAndCheckIt(fullPath);
         if(systemManager.isXMLFileLoaded())
             System.out.println("Loadeded successfully");
         else

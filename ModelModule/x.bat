@@ -1,0 +1,1 @@
+xjc -p SDMGenerated C:\Users\Lior\IdeaProjects\Ex01\ModelModule\src\resources\SDM-V1.xsd
