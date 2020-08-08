@@ -3,11 +3,15 @@ package SDMModel;
 
 import SDMGenerated.SDMItem;
 
+import java.util.ArrayList;
+
 public class Item {
 
     protected String name;
     protected String purchaseCategory;
     protected int id;
+    protected int numberOfTimePurchased;
+    public ArrayList<Store> storesWhoSellTheItem;
 
     public static Item createInstanceBySDM(SDMItem sdmItem) {
         Item newItem = new Item();
@@ -41,4 +45,9 @@ public class Item {
     public void setId(int id) {
         this.id = id;
     }
+
+    public ArrayList<Store> getStoresWhoSellTheItem(){ return storesWhoSellTheItem; }
+
+
+
 }

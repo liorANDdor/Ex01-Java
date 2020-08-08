@@ -1,7 +1,11 @@
 package UI;
 
+import SDMModel.SuperMarket;
 import SDMModel.SystemManager;
+import SDMModel.Store;
+import SDMModel.Item;
 
+import java.util.HashMap;
 import java.util.Scanner;
 
 public class SuperMarketUI {
@@ -54,7 +58,8 @@ public class SuperMarketUI {
                     loadXMLFile();
                     break;
                 case ShowStores:
-                    System.out.println("SHoewStores");
+                    System.out.println("Stores:");
+                    showStores();
                     break;
                 case ShowAllItems:
                     System.out.println("Items");
@@ -69,6 +74,13 @@ public class SuperMarketUI {
             }
         } while (!userSelection.equals(eMainMenu.Exit)) ;
 
+    }
+
+    private void showStores() {
+
+        System.out.println("#################################################");
+
+        System.out.println("#################################################");
     }
 
     private void createOrder() {

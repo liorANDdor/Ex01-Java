@@ -3,7 +3,7 @@ package SDMModel;
 import SDMGenerated.SuperDuperMarketDescriptor;
 
 public class SystemManager {
-    private SuperMarket superMarket;
+    public SuperMarket superMarket;
     private SuperDuperMarketDescriptor superMarketSDM;
     private XmlUtilities xmlUtilities;
     private boolean isXmlLoaded = false;
