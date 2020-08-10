@@ -5,6 +5,7 @@ import SDMGenerated.SDMSell;
 import SDMGenerated.SDMStore;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -13,7 +14,7 @@ public class Store {
     private String name;
     private int deliveryPpk;
     private Point location;
-    private List<Sell> itemsToSell;
+    private List<Sell> itemsToSell = new ArrayList<>();
     private int id;
 
     public static Store createInstanceBySDM(SDMStore sdmStore) {

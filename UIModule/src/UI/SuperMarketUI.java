@@ -1,11 +1,10 @@
 package UI;
 
-import SDMModel.SuperMarket;
-import SDMModel.SystemManager;
-import SDMModel.Store;
-import SDMModel.Item;
+import SDMModel.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Scanner;
 
 public class SuperMarketUI {
@@ -63,6 +62,7 @@ public class SuperMarketUI {
                     break;
                 case ShowAllItems:
                     System.out.println("Items");
+                    showItems();
                     break;
                 case CreateAnOrder:
                     createOrder();
@@ -77,11 +77,58 @@ public class SuperMarketUI {
     }
 
     private void showStores() {
-
-        System.out.println("#################################################");
-
-        System.out.println("#################################################");
+        HashMap<Integer, Store> stores = systemManager.superMarket.getStores();
+        for(Store store:stores.values()) {
+            System.out.println("#################################################");
+            printStore(store);
+            System.out.println("\n\n");
+        }
     }
+
+    private void showItems() {
+        HashMap<Integer, Item> items = systemManager.superMarket.getItems();
+        for(Item item:items.values()) {
+            System.out.println("#################################################");
+            printItem(item);
+            System.out.println("\n\n");
+        }
+    }
+
+    private void printStore(Store store) {
+        System.out.println("Store ID: " + store.getId() );
+        System.out.println("Store Name: " + store.getName() );
+        System.out.println("Store Items: ");
+        for(Sell sell:store.getItemsToSell()) {
+            printSellOffer(sell);
+        }
+        //System.out.println("Store ID: " + store.getId() );
+    }
+
+    private void printSellOffer(Sell sell) {
+        Item itemToShow = systemManager.superMarket.getItemByID(sell.getItemId());
+        System.out.println("________");
+        System.out.println("Item ID: " + itemToShow.getId() );
+        System.out.println("Item Name: " + itemToShow.getName());
+        System.out.println("Item sell catagory (weight / quantity): " + itemToShow.getPurchaseCategory() );
+        System.out.println("Item price : " + sell.getPrice() );
+        System.out.println("Amount of items sold by store : " + sell.getNumberOfTimesItemWasSold() );
+
+    }
+
+    private void printItem(Item item) {
+        int numOfStoresSellTheItem = 0;
+        System.out.println("________");
+        System.out.println("Item ID: " + item.getId() );
+        System.out.println("Item Name: " + item.getName());
+        System.out.println("Item sell catagory (weight / quantity): " + item.getPurchaseCategory() );
+        if(item.getStoresWhoSellTheItem()!=null)
+            numOfStoresSellTheItem = item.getStoresWhoSellTheItem().size() ;
+
+        System.out.println("Amount of stores selling the item : " + numOfStoresSellTheItem );
+        System.out.println("Amound of time item was sold : " + item.getTotalNumberOfTimePurchased() );
+
+    }
+
 
     private void createOrder() {
 

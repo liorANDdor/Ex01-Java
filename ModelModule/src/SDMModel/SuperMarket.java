@@ -8,9 +8,9 @@ import java.util.HashMap;
 import java.util.List;
 
 public class SuperMarket {
-
-    private HashMap<Integer, Store> stores;
-    private HashMap<Integer ,Item> items;
+    // /Users/dor.cohen/Downloads/ex1-big.xml
+    private HashMap<Integer, Store> stores = new  HashMap<Integer ,Store>();
+    private HashMap<Integer ,Item> items = new  HashMap<Integer ,Item>();
 
     public HashMap<Integer, Store> getStores() {
         return stores;
@@ -30,6 +30,7 @@ public class SuperMarket {
 
     public static SuperMarket creatInstance(SuperDuperMarketDescriptor superMarketSDM) {
         SuperMarket instance = new SuperMarket();
+
         List<SDMItem>itemsSDM = superMarketSDM.getSDMItems().getSDMItem();
         List<SDMStore>storesSDM = superMarketSDM.getSDMStores().getSDMStore();
         for(SDMItem sdmItem : itemsSDM){
@@ -43,6 +44,14 @@ public class SuperMarket {
         }
 
         return instance;
+    }
+
+    public Item getItemByID(int itemId){
+        Item item = items.getOrDefault(itemId, null);
+        if (item ==null)
+            return null;//TODO error
+
+        return item;
     }
 
     public double getItemAveragePriceByID(int itemId){

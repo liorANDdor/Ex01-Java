@@ -7,11 +7,17 @@ import java.util.ArrayList;
 
 public class Item {
 
+    public static int getTotalNumberOfTimePurchased() {
+        return totalNumberOfTimePurchased;
+    }
+
+    public static int totalNumberOfTimePurchased = 0;
+    public ArrayList<Store> storesWhoSellTheItem; //should it be static?
     protected String name;
-    protected String purchaseCategory;
+    protected String purchaseCategory; //can be enum
     protected int id;
-    protected int numberOfTimePurchased;
-    public ArrayList<Store> storesWhoSellTheItem;
+    protected int numberOfTimePurchasedByStore;
+
 
     public static Item createInstanceBySDM(SDMItem sdmItem) {
         Item newItem = new Item();
