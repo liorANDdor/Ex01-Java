@@ -9,6 +9,7 @@ public class Sell {
     private int itemId;
     private int numberOfTimesItemWasSold;
 
+
     public static Sell createInstanceBySDM(SDMSell sell) {
         Sell newSell= new Sell();
         newSell.setItemId(sell.getItemId());

@@ -117,15 +117,22 @@ public class SuperMarketUI {
 
     private void printItem(Item item) {
         int numOfStoresSellTheItem = 0;
+        double itemAveragePrice = 0;
         System.out.println("________");
         System.out.println("Item ID: " + item.getId() );
         System.out.println("Item Name: " + item.getName());
         System.out.println("Item sell catagory (weight / quantity): " + item.getPurchaseCategory() );
-        if(item.getStoresWhoSellTheItem()!=null)
-            numOfStoresSellTheItem = item.getStoresWhoSellTheItem().size() ;
+        if(item.getStoresWhoSellTheItem()!=null) {
+            numOfStoresSellTheItem = item.getStoresWhoSellTheItem().size();
+            itemAveragePrice = systemManager.superMarket.getItemAveragePriceByID(item.getId());
+        }
+        System.out.println("Amount of stores selling the item: " + numOfStoresSellTheItem );
+        if(itemAveragePrice == 0)
+            System.out.println("Item average price: Item is currently unavailable"); //item function?
+        else
+            System.out.println("Item average price: " + itemAveragePrice); //item function?
 
-        System.out.println("Amount of stores selling the item : " + numOfStoresSellTheItem );
-        System.out.println("Amound of time item was sold : " + item.getTotalNumberOfTimePurchased() );
+        System.out.println("Number of times item was sold : " + item.getTotalNumberOfTimePurchased() );
 
     }
 

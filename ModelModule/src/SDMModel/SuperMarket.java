@@ -56,7 +56,10 @@ public class SuperMarket {
 
     public double getItemAveragePriceByID(int itemId){
         double sumPriceOfItems = 0;
+
         Item item = items.getOrDefault(itemId, null);
+        if(item.storesWhoSellTheItem == null)
+            return 0; //no stores sell the item
         if (item ==null)
             //TODO error
             return 0;
