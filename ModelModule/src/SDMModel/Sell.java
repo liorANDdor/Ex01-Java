@@ -7,6 +7,8 @@ public class Sell {
 
     private int price;
     private int itemId;
+    private int numberOfTimesItemWasSold;
+
 
     public static Sell createInstanceBySDM(SDMSell sell) {
         Sell newSell= new Sell();
@@ -29,6 +31,14 @@ public class Sell {
 
     public void setItemId(int itemId) {
         this.itemId = itemId;
+    }
+
+    public int getNumberOfTimesItemWasSold() {
+        return numberOfTimesItemWasSold;
+    }
+
+    public void increaseNumberOfTimesItemWasSold(int itemId) {
+        this.numberOfTimesItemWasSold=numberOfTimesItemWasSold+1;
     }
 
 }

@@ -1,7 +1,10 @@
 package UI;
 
-import SDMModel.SystemManager;
+import SDMModel.*;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Scanner;
 
 public class SuperMarketUI {
@@ -54,10 +57,12 @@ public class SuperMarketUI {
                     loadXMLFile();
                     break;
                 case ShowStores:
-                    System.out.println("SHoewStores");
+                    System.out.println("Stores:");
+                    showStores();
                     break;
                 case ShowAllItems:
                     System.out.println("Items");
+                    showItems();
                     break;
                 case CreateAnOrder:
                     createOrder();
@@ -70,6 +75,67 @@ public class SuperMarketUI {
         } while (!userSelection.equals(eMainMenu.Exit)) ;
 
     }
+
+    private void showStores() {
+        HashMap<Integer, Store> stores = systemManager.superMarket.getStores();
+        for(Store store:stores.values()) {
+            System.out.println("#################################################");
+            printStore(store);
+            System.out.println("\n\n");
+        }
+    }
+
+    private void showItems() {
+        HashMap<Integer, Item> items = systemManager.superMarket.getItems();
+        for(Item item:items.values()) {
+            System.out.println("#################################################");
+            printItem(item);
+            System.out.println("\n\n");
+        }
+    }
+
+    private void printStore(Store store) {
+        System.out.println("Store ID: " + store.getId() );
+        System.out.println("Store Name: " + store.getName() );
+        System.out.println("Store Items: ");
+        for(Sell sell:store.getItemsToSell()) {
+            printSellOffer(sell);
+        }
+        //System.out.println("Store ID: " + store.getId() );
+    }
+
+    private void printSellOffer(Sell sell) {
+        Item itemToShow = systemManager.superMarket.getItemByID(sell.getItemId());
+        System.out.println("________");
+        System.out.println("Item ID: " + itemToShow.getId() );
+        System.out.println("Item Name: " + itemToShow.getName());
+        System.out.println("Item sell catagory (weight / quantity): " + itemToShow.getPurchaseCategory() );
+        System.out.println("Item price : " + sell.getPrice() );
+        System.out.println("Amount of items sold by store : " + sell.getNumberOfTimesItemWasSold() );
+
+    }
+
+    private void printItem(Item item) {
+        int numOfStoresSellTheItem = 0;
+        double itemAveragePrice = 0;
+        System.out.println("________");
+        System.out.println("Item ID: " + item.getId() );
+        System.out.println("Item Name: " + item.getName());
+        System.out.println("Item sell catagory (weight / quantity): " + item.getPurchaseCategory() );
+        if(item.getStoresWhoSellTheItem()!=null) {
+            numOfStoresSellTheItem = item.getStoresWhoSellTheItem().size();
+            itemAveragePrice = systemManager.superMarket.getItemAveragePriceByID(item.getId());
+        }
+        System.out.println("Amount of stores selling the item: " + numOfStoresSellTheItem );
+        if(itemAveragePrice == 0)
+            System.out.println("Item average price: Item is currently unavailable"); //item function?
+        else
+            System.out.println("Item average price: " + itemAveragePrice); //item function?
+
+        System.out.println("Number of times item was sold : " + item.getTotalNumberOfTimePurchased() );
+
+    }
+
 
     private void createOrder() {
 

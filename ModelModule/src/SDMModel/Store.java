@@ -5,6 +5,7 @@ import SDMGenerated.SDMSell;
 import SDMGenerated.SDMStore;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -13,7 +14,7 @@ public class Store {
     private String name;
     private int deliveryPpk;
     private Point location;
-    private List<Sell> ItemsToSell;
+    private List<Sell> itemsToSell = new ArrayList<>();
     private int id;
 
     public static Store createInstanceBySDM(SDMStore sdmStore) {
@@ -48,11 +49,11 @@ public class Store {
     }
 
     public List<Sell> getItemsToSell() {
-        return ItemsToSell;
+        return itemsToSell;
     }
 
     public void setItemsToSell(List<Sell> itemsToSell) {
-        ItemsToSell = itemsToSell;
+        itemsToSell = itemsToSell;
     }
 
     public int getId() {
@@ -70,4 +71,24 @@ public class Store {
     public void setName(String name) {
         this.name = name;
     }
+
+    public int getNumberOfTimesItemWasSold(int itemId) {
+        for(Sell sell:itemsToSell){
+            if(sell.getItemId() == itemId){
+                return sell.getNumberOfTimesItemWasSold();
+            }
+        }
+        return 0; // item wasn't find by ID
+    }
+
+    public double getItemPrice(int itemId) {
+        for(Sell sell:itemsToSell){
+            if(sell.getItemId() == itemId){
+                return sell.getPrice();
+            }
+        }
+        return 0; //TODO:ERROR raise
+    }
+
+    
 }
