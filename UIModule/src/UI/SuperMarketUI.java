@@ -77,21 +77,32 @@ public class SuperMarketUI {
     }
 
     private void showStores() {
-        HashMap<Integer, Store> stores = systemManager.superMarket.getStores();
-        for(Store store:stores.values()) {
-            System.out.println("#################################################");
-            printStore(store);
-            System.out.println("\n\n");
+        if(systemManager.isXmlLoaded()){
+            HashMap<Integer, Store> stores = systemManager.getSuperMarket().getStores();
+            for(Store store:stores.values()) {
+                System.out.println("#################################################");
+                printStore(store);
+                System.out.println("\n\n");
+            }
         }
+        else
+            System.out.println("You should load an xml file");
+
     }
 
     private void showItems() {
-        HashMap<Integer, Item> items = systemManager.superMarket.getItems();
-        for(Item item:items.values()) {
-            System.out.println("#################################################");
-            printItem(item);
-            System.out.println("\n\n");
+        if(systemManager.isXmlLoaded()){
+            HashMap<Integer, Item> items = systemManager.getSuperMarket().getItems();
+            for(Item item:items.values()) {
+                System.out.println("#################################################");
+                printItem(item);
+                System.out.println("\n\n");
+            }
         }
+        else
+            System.out.println("You should load an xml file");
+
+
     }
 
     private void printStore(Store store) {
@@ -105,7 +116,7 @@ public class SuperMarketUI {
     }
 
     private void printSellOffer(Sell sell) {
-        Item itemToShow = systemManager.superMarket.getItemByID(sell.getItemId());
+        Item itemToShow = systemManager.getSuperMarket().getItemByID(sell.getItemId());
         System.out.println("________");
         System.out.println("Item ID: " + itemToShow.getId() );
         System.out.println("Item Name: " + itemToShow.getName());
@@ -124,7 +135,7 @@ public class SuperMarketUI {
         System.out.println("Item sell catagory (weight / quantity): " + item.getPurchaseCategory() );
         if(item.getStoresWhoSellTheItem()!=null) {
             numOfStoresSellTheItem = item.getStoresWhoSellTheItem().size();
-            itemAveragePrice = systemManager.superMarket.getItemAveragePriceByID(item.getId());
+            itemAveragePrice = systemManager.getSuperMarket().getItemAveragePriceByID(item.getId());
         }
         System.out.println("Amount of stores selling the item: " + numOfStoresSellTheItem );
         if(itemAveragePrice == 0)
@@ -144,11 +155,15 @@ public class SuperMarketUI {
     private void loadXMLFile() {
         System.out.println("Please enter full path of your XML file.");
         String fullPath = scanner.nextLine();
+        fullPath = "D:\\ex1-small.xml";
         systemManager.LoadXMLFileAndCheckIt(fullPath);
-        if(systemManager.isXmlLoaded())
+        if(systemManager.getXmlUtilities().getIsXmlOk())
             System.out.println("Loadeded successfully");
-        else
-            System.out.println("Not loadeded successfully");
+        else{
+            System.out.println("Not loadeded successfully \n");
+            System.out.println(systemManager.getXmlUtilities().getWhatWrongMessage());
+        }
+
     }
 
 

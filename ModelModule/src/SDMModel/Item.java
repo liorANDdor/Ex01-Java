@@ -15,9 +15,9 @@ public class Item {
 
     public int totalNumberOfTimePurchased = 0;
     public ArrayList<Store> storesWhoSellTheItem; //should it be static?
-    protected String name;
-    protected PurchaseCategory purchaseCategory; //can be enum
-    protected int id;
+    private String name;
+    private PurchaseCategory purchaseCategory; //can be enum
+    private int id;
 
 
 

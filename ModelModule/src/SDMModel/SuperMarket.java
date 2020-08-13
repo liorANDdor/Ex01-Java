@@ -35,7 +35,7 @@ public class SuperMarket {
         List<SDMStore>storesSDM = superMarketSDM.getSDMStores().getSDMStore();
         for(SDMItem sdmItem : itemsSDM){
             Item newItem = Item.createInstanceBySDM(sdmItem);
-            instance.getItems().put(newItem.id,newItem);
+            instance.getItems().put(newItem.getId(),newItem);
         }
 
         for(SDMStore sdmStore : storesSDM){
