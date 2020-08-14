@@ -6,7 +6,22 @@ import SDMGenerated.SDMItem;
 import java.util.ArrayList;
 
 public class Item {
+    public enum InfoOptions {
+        Name, ID, Category;
 
+        public String getInfo(Item item) {
+            switch (this) {
+                case ID:
+                    return String.valueOf(item.getId());
+                case Name:
+                    return item.getName();
+                case Category:
+                    return String.valueOf(item.getPurchaseCategory());
+                default:
+                    return "Unknown";
+            }
+        }
+    }
 
     public enum PurchaseCategory {
         QUANTITY,

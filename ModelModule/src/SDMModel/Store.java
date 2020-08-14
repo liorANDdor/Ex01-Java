@@ -11,6 +11,25 @@ import java.util.List;
 
 public class Store {
 
+    public enum InfoOptions {
+        Name, ID, Location, DeliveryPPK;
+
+        public String getInfo(Store store) {
+            switch (this) {
+                case Name:
+                    return store.getName();
+                case ID:
+                    return String.valueOf(store.getId());
+                case Location:
+                    return String.valueOf(store.getLocation());
+                case DeliveryPPK:
+                    return String.valueOf(store.getDeliveryPpk());
+                default:
+                    return "Unknown";
+            }
+        }
+    }
+
     private String name;
     private int deliveryPpk;
     private Point location;

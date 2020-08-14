@@ -5,6 +5,23 @@ import SDMGenerated.SDMSell;
 
 public class Sell {
 
+    public enum InfoOptions {
+        Price, ID, TimesWasSold;
+
+        public String getInfo(Sell sell) {
+            switch (this) {
+                case ID:
+                    return String.valueOf(sell.getItemId());
+                case Price:
+                    return String.valueOf(sell.getPrice());
+                case TimesWasSold:
+                    return String.valueOf(sell.getNumberOfTimesItemWasSold());
+                default:
+                    return "Unknown";
+            }
+        }
+    }
+
     private int price;
     private int itemId;
     private int numberOfTimesItemWasSold;

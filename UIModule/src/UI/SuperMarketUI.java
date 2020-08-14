@@ -2,10 +2,7 @@ package UI;
 
 import SDMModel.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class SuperMarketUI {
 
@@ -106,7 +103,11 @@ public class SuperMarketUI {
     }
 
     private void printStore(Store store) {
-        System.out.println(systemManager.getStoreInfo(store));
+        List<Store.InfoOptions>list=new LinkedList<>();
+        list.add(Store.InfoOptions.ID);
+        list.add(Store.InfoOptions.Name);
+        list.add(Store.InfoOptions.DeliveryPPK);
+        System.out.println(systemManager.getStoreInfo(store,list));
         System.out.println("Store Items: ");
         for(Sell sell:store.getItemsToSell()) {
             System.out.println(systemManager.getSellInfo(sell));
@@ -123,7 +124,11 @@ public class SuperMarketUI {
     private void printItem(Item item) {
 
         System.out.println("________");
-        System.out.println(systemManager.getItemInfo(item) );
+        List <Item.InfoOptions>list = new ArrayList<Item.InfoOptions>();
+        list.add(Item.InfoOptions.ID);
+        list.add(Item.InfoOptions.Name);
+        list.add(Item.InfoOptions.Category);
+        System.out.println(systemManager.getinfoItem(item,list));
 
     }
 
@@ -136,7 +141,7 @@ public class SuperMarketUI {
         System.out.println("Please enter full path of your XML file.");
         String fullPath = scanner.nextLine();
         fullPath = "D:\\ex1-small.xml";
-        fullPath = "/Users/dor.cohen/Downloads/ex1-big.xml";
+        //fullPath = "/Users/dor.cohen/Downloads/ex1-big.xml";
         systemManager.LoadXMLFileAndCheckIt(fullPath);
         if(systemManager.getXmlUtilities().getIsXmlOk())
             System.out.println("Loadeded successfully");

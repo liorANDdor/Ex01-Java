@@ -44,6 +44,14 @@ public class SystemManager {
         return thereIsXmlLoaded;
     }
 
+    public StringBuilder getinfoItem(Item item, List<Item.InfoOptions>list){
+        StringBuilder itemInfo = new StringBuilder();
+        for (Item.InfoOptions option : list){
+            itemInfo.append(option.toString()).append(": ").append(option.getInfo(item)).append("\n");
+        }
+
+        return itemInfo;
+    }
     public StringBuilder getItemInfo(Item item) {
         int numOfStoresSellTheItem = 0;
         double itemAveragePrice = 0;
@@ -79,11 +87,11 @@ public class SystemManager {
         return itemInfo;
     }
 
-    public StringBuilder getStoreInfo(Store store){
+    public StringBuilder getStoreInfo(Store store , List<Store.InfoOptions>list){
         StringBuilder storeInfo = new StringBuilder();
-        storeInfo.append("Store ID: ").append(store.getId()).append("\n");
-        storeInfo.append("Store Name: ").append(store.getName()).append("\n");
-
+        for (Store.InfoOptions option : list) {
+            storeInfo.append(option.toString()).append(": ").append(option.getInfo(store)).append("\n");
+        }
         return storeInfo;
 
 
