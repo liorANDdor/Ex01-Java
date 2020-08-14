@@ -44,4 +44,48 @@ public class SystemManager {
         return thereIsXmlLoaded;
     }
 
+    public StringBuilder getItemInfo(Item item) {
+        int numOfStoresSellTheItem = 0;
+        double itemAveragePrice = 0;
+        StringBuilder itemInfo = new StringBuilder();
+        itemInfo.append("Item ID: ").append(item.getId()).append("\n");
+        itemInfo.append("Item Name: ").append(item.getName()).append("\n");
+        itemInfo.append("Item sell catagory (weight / quantity): ").append(item.getPurchaseCategory().toString() ).append("\n");
+
+        if(item.getStoresWhoSellTheItem()!=null) {
+            numOfStoresSellTheItem = item.getStoresWhoSellTheItem().size();
+            itemAveragePrice = getSuperMarket().getItemAveragePriceByID(item.getId());
+        }
+        itemInfo.append("Amount of stores selling the item: ").append(numOfStoresSellTheItem).append("\n");
+
+        if(itemAveragePrice == 0)
+            itemInfo.append("Item average price: Item is currently unavailable \n");
+        else
+            itemInfo.append("Item average price: ").append(itemAveragePrice).append("\n");
+
+        itemInfo.append("Number of times item was sold: ").append(item.getTotalNumberOfTimePurchased() ).append("\n");
+
+        return itemInfo;
+    }
+
+    public StringBuilder getSellInfo(Sell sell){
+        Item itemToSell = getSuperMarket().getItemByID(sell.getItemId());
+        StringBuilder itemInfo = new StringBuilder();
+        itemInfo.append("Item ID: ").append(itemToSell.getId()).append("\n");
+        itemInfo.append("Item Name: ").append(itemToSell.getName()).append("\n");
+        itemInfo.append("Item Price: ").append(sell.getPrice()).append("\n");
+        itemInfo.append("Amount of items sold by store: ").append(sell.getNumberOfTimesItemWasSold()).append("\n");
+
+        return itemInfo;
+    }
+
+    public StringBuilder getStoreInfo(Store store){
+        StringBuilder storeInfo = new StringBuilder();
+        storeInfo.append("Store ID: ").append(store.getId()).append("\n");
+        storeInfo.append("Store Name: ").append(store.getName()).append("\n");
+
+        return storeInfo;
+
+
+    }
 }
