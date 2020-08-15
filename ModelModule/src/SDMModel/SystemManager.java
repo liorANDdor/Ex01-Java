@@ -32,13 +32,6 @@ public class SystemManager {
         }
     }
 
-    public List<String>getAllItems(){
-        List<String> str= new LinkedList<>();
-        for(Map.Entry<Integer, Item>  inte : superMarket.getItems().entrySet()){
-            str.add(inte.getValue().getName()+inte.getValue().getId());
-        }
-        return str;
-    }
 
     public boolean isXmlLoaded() {
         return thereIsXmlLoaded;
@@ -53,24 +46,12 @@ public class SystemManager {
         return itemInfo;
     }
 
-
     public StringBuilder getInfoSell(Sell sell, List<Sell.InfoOptions>list){
         StringBuilder sellInfo = new StringBuilder();
         for (Sell.InfoOptions option : list) {
             sellInfo.append(String.join(" ", option.toString().split("(?=[A-Z])"))).append(": ").append(option.getInfo(sell)).append("\n");
         }
         return sellInfo;
-
-    }
-    public StringBuilder getSellInfo(Sell sell){
-        Item itemToSell = getSuperMarket().getItemByID(sell.getItemId());
-        StringBuilder itemInfo = new StringBuilder();
-        itemInfo.append("Item ID: ").append(itemToSell.getId()).append("\n");
-        itemInfo.append("Item Name: ").append(itemToSell.getName()).append("\n");
-        itemInfo.append("Item Price: ").append(sell.getPrice()).append("\n");
-        itemInfo.append("Amount of items sold by store: ").append(sell.getNumberOfTimesItemWasSold()).append("\n");
-
-        return itemInfo;
     }
 
     public StringBuilder getStoreInfo(Store store , List<Store.InfoOptions>list){
@@ -79,7 +60,5 @@ public class SystemManager {
             storeInfo.append(option.toString()).append(": ").append(option.getInfo(store)).append("\n");
         }
         return storeInfo;
-
-
     }
 }

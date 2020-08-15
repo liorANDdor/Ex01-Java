@@ -1,7 +1,9 @@
 package UI;
 
 import SDMModel.*;
+import org.omg.Messaging.SYNC_WITH_TRANSPORT;
 
+import javax.print.DocFlavor;
 import java.util.*;
 
 public class SuperMarketUI {
@@ -28,8 +30,10 @@ public class SuperMarketUI {
                 userSelectionAsInt = Integer.parseInt(userSelectionAsString);
                 if (userSelectionAsInt <= length && userSelectionAsInt >= 1)
                     validOption = true;
+                else
+                    System.out.println("Input not in range");
             } catch (Exception Ex) {
-                System.out.println(Ex.getMessage());
+                System.out.println("Input should be a number!");
                 validOption = false;
             }
 
@@ -79,12 +83,11 @@ public class SuperMarketUI {
             for(Store store:stores.values()) {
                 System.out.println("#################################################");
                 printStore(store);
-                System.out.println("\n\n");
+                System.out.println("\n");
             }
         }
         else
             System.out.println("You should load an xml file");
-
     }
 
     private void showItems() {
@@ -93,13 +96,11 @@ public class SuperMarketUI {
             for(Item item:items.values()) {
                 System.out.println("#################################################");
                 printItem(item);
-                System.out.println("\n\n");
+                System.out.println("\n");
             }
         }
         else
             System.out.println("You should load an xml file");
-
-
     }
 
     private void printStore(Store store) {
@@ -122,14 +123,12 @@ public class SuperMarketUI {
         itemAttributes.add(Item.InfoOptions.Name);
         itemAttributes.add(Item.InfoOptions.Category);
         StringBuilder SellInfo = systemManager.getinfoItem(itemToSell,itemAttributes);
-
         sellAttributes.add(Sell.InfoOptions.Price);
         sellAttributes.add(Sell.InfoOptions.TimesWasSold);
         System.out.println(SellInfo.append(systemManager.getInfoSell(sell, sellAttributes)));
     }
 
     private void printItem(Item item) {
-
         System.out.println("________");
         List <Item.InfoOptions>list = new ArrayList<Item.InfoOptions>();
         list.add(Item.InfoOptions.ItemId);
@@ -142,16 +141,10 @@ public class SuperMarketUI {
 
     }
 
-
-    private void createOrder() {
-
-    }
-
     private void loadXMLFile() {
         System.out.println("Please enter full path of your XML file.");
         String fullPath = scanner.nextLine();
-        //fullPath = "D:\\ex1-small.xml";
-        fullPath = "/Users/dor.cohen/Downloads/ex1-big.xml";
+        fullPath = "C:\\Users\\Lior\\IdeaProjects\\ex1-small.xml";
         systemManager.LoadXMLFileAndCheckIt(fullPath);
         if(systemManager.getXmlUtilities().getIsXmlOk())
             System.out.println("Loadeded successfully");
@@ -159,8 +152,13 @@ public class SuperMarketUI {
             System.out.println("Not loadeded successfully \n");
             System.out.println(systemManager.getXmlUtilities().getWhatWrongMessage());
         }
+    }
+
+    private void createOrder() {
 
     }
+
+
 
 
 }

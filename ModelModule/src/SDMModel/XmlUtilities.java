@@ -114,9 +114,10 @@ public class XmlUtilities {
                             store.getName());
                 }
             }
+            isXmlOk = isContentAsNeeded;
         }
 
-        isXmlOk = isContentAsNeeded;
+
     }
 
     public void isNameOfFileCorrect(String fullPath) {
