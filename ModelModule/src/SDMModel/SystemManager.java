@@ -47,35 +47,21 @@ public class SystemManager {
     public StringBuilder getinfoItem(Item item, List<Item.InfoOptions>list){
         StringBuilder itemInfo = new StringBuilder();
         for (Item.InfoOptions option : list){
-            itemInfo.append(option.toString()).append(": ").append(option.getInfo(item)).append("\n");
+            itemInfo.append(String.join(" ", option.toString().split("(?=[A-Z])"))).append(": ").append(option.getInfo(item)).append("\n");
         }
 
         return itemInfo;
     }
-    public StringBuilder getItemInfo(Item item) {
-        int numOfStoresSellTheItem = 0;
-        double itemAveragePrice = 0;
-        StringBuilder itemInfo = new StringBuilder();
-        itemInfo.append("Item ID: ").append(item.getId()).append("\n");
-        itemInfo.append("Item Name: ").append(item.getName()).append("\n");
-        itemInfo.append("Item sell catagory (weight / quantity): ").append(item.getPurchaseCategory().toString() ).append("\n");
 
-        if(item.getStoresWhoSellTheItem()!=null) {
-            numOfStoresSellTheItem = item.getStoresWhoSellTheItem().size();
-            itemAveragePrice = getSuperMarket().getItemAveragePriceByID(item.getId());
+
+    public StringBuilder getInfoSell(Sell sell, List<Sell.InfoOptions>list){
+        StringBuilder sellInfo = new StringBuilder();
+        for (Sell.InfoOptions option : list) {
+            sellInfo.append(String.join(" ", option.toString().split("(?=[A-Z])"))).append(": ").append(option.getInfo(sell)).append("\n");
         }
-        itemInfo.append("Amount of stores selling the item: ").append(numOfStoresSellTheItem).append("\n");
+        return sellInfo;
 
-        if(itemAveragePrice == 0)
-            itemInfo.append("Item average price: Item is currently unavailable \n");
-        else
-            itemInfo.append("Item average price: ").append(itemAveragePrice).append("\n");
-
-        itemInfo.append("Number of times item was sold: ").append(item.getTotalNumberOfTimePurchased() ).append("\n");
-
-        return itemInfo;
     }
-
     public StringBuilder getSellInfo(Sell sell){
         Item itemToSell = getSuperMarket().getItemByID(sell.getItemId());
         StringBuilder itemInfo = new StringBuilder();

@@ -75,6 +75,14 @@ public class Store {
         itemsToSell = itemsToSell;
     }
 
+    public boolean isItemSold(int itemId){
+        for (Sell sell:itemsToSell){
+            if (sell.getItemId()==itemId)
+                    return true;
+        }
+        return false;
+    }
+
     public int getId() {
         return id;
     }

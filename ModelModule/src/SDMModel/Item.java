@@ -2,21 +2,29 @@ package SDMModel;
 
 
 import SDMGenerated.SDMItem;
+import com.sun.xml.internal.bind.v2.TODO;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Item {
     public enum InfoOptions {
-        Name, ID, Category;
+        Name, ItemId, Category, NumberOfStoresSellTheItem, ItemAveragePrice, NumberOfTimesItemWasSold;
 
         public String getInfo(Item item) {
             switch (this) {
-                case ID:
+                case ItemId:
                     return String.valueOf(item.getId());
                 case Name:
                     return item.getName();
                 case Category:
                     return String.valueOf(item.getPurchaseCategory());
+                case NumberOfStoresSellTheItem:
+                    return String.valueOf(item.getStoresWhoSellTheItem().size());
+                case ItemAveragePrice:
+                    return String.valueOf(item.getItemAveragePrice());
+                case NumberOfTimesItemWasSold:
+                    return String.valueOf(item.getNumberOfTimesItemWasSold());
                 default:
                     return "Unknown";
             }
@@ -33,21 +41,31 @@ public class Item {
         }
     }
 
-    public int totalNumberOfTimePurchased = 0;
-    public ArrayList<Store> storesWhoSellTheItem; //should it be static?
+    public double totalNumberOfTimePurchased = 0;
+    public List<Store> storesWhoSellTheItem = new ArrayList<>(); //should it be static?
     private String name;
     private PurchaseCategory purchaseCategory; //can be enum
     private int id;
 
 
 
-    public static Item createInstanceBySDM(SDMItem sdmItem) {
+    public static Item createInstanceBySDM(SDMItem sdmItem, List<Store> stores) {
         Item newItem = new Item();
         newItem.setId(sdmItem.getId());
         newItem.setName(sdmItem.getName());
         newItem.setPurchaseCategory(sdmItem.getPurchaseCategory());
-        
+        newItem.setStoresWhoSellTheItem(stores);
         return newItem;
+    }
+
+    public double getItemAveragePrice(){ //we can change logic so the average price will be update each time it is ordered
+                                        //and then just use a getter
+        double sumPriceOfItems = 0;
+        int numberOfStoresSellTheItem =  storesWhoSellTheItem.size();
+        for (Store store : storesWhoSellTheItem){
+            sumPriceOfItems = store.getItemPrice(id);
+        }
+        return (double)Math.round(sumPriceOfItems/numberOfStoresSellTheItem * 1000d) / 1000d;
     }
 
     public String getName() {
@@ -78,9 +96,10 @@ public class Item {
         this.id = id;
     }
 
-    public ArrayList<Store> getStoresWhoSellTheItem(){ return storesWhoSellTheItem; }
+    public List<Store> getStoresWhoSellTheItem(){ return storesWhoSellTheItem; }
+    public void setStoresWhoSellTheItem(List<Store> stores){ storesWhoSellTheItem=stores; }
 
-    public  int getTotalNumberOfTimePurchased() {
+    public  double getNumberOfTimesItemWasSold() {
         return totalNumberOfTimePurchased;
     }
 

@@ -110,24 +110,34 @@ public class SuperMarketUI {
         System.out.println(systemManager.getStoreInfo(store,list));
         System.out.println("Store Items: ");
         for(Sell sell:store.getItemsToSell()) {
-            System.out.println(systemManager.getSellInfo(sell));
+            printSellOffer(sell);
         }
-        //System.out.println("Store ID: " + store.getId() );
     }
 
     private void printSellOffer(Sell sell) {
-        Item itemToShow = systemManager.getSuperMarket().getItemByID(sell.getItemId());
-        System.out.println("________");
-        System.out.println(systemManager.getSellInfo(sell));
+        Item itemToSell = systemManager.getSuperMarket().getItemByID(sell.getItemId());
+        List <Item.InfoOptions> itemAttributes = new ArrayList<Item.InfoOptions>();
+        List <Sell.InfoOptions> sellAttributes = new ArrayList<>();
+        itemAttributes.add(Item.InfoOptions.ItemId);
+        itemAttributes.add(Item.InfoOptions.Name);
+        itemAttributes.add(Item.InfoOptions.Category);
+        StringBuilder SellInfo = systemManager.getinfoItem(itemToSell,itemAttributes);
+
+        sellAttributes.add(Sell.InfoOptions.Price);
+        sellAttributes.add(Sell.InfoOptions.TimesWasSold);
+        System.out.println(SellInfo.append(systemManager.getInfoSell(sell, sellAttributes)));
     }
 
     private void printItem(Item item) {
 
         System.out.println("________");
         List <Item.InfoOptions>list = new ArrayList<Item.InfoOptions>();
-        list.add(Item.InfoOptions.ID);
+        list.add(Item.InfoOptions.ItemId);
         list.add(Item.InfoOptions.Name);
         list.add(Item.InfoOptions.Category);
+        list.add(Item.InfoOptions.NumberOfStoresSellTheItem);
+        list.add(Item.InfoOptions.ItemAveragePrice);
+        list.add(Item.InfoOptions.NumberOfTimesItemWasSold);
         System.out.println(systemManager.getinfoItem(item,list));
 
     }
@@ -140,8 +150,8 @@ public class SuperMarketUI {
     private void loadXMLFile() {
         System.out.println("Please enter full path of your XML file.");
         String fullPath = scanner.nextLine();
-        fullPath = "D:\\ex1-small.xml";
-        //fullPath = "/Users/dor.cohen/Downloads/ex1-big.xml";
+        //fullPath = "D:\\ex1-small.xml";
+        fullPath = "/Users/dor.cohen/Downloads/ex1-big.xml";
         systemManager.LoadXMLFileAndCheckIt(fullPath);
         if(systemManager.getXmlUtilities().getIsXmlOk())
             System.out.println("Loadeded successfully");

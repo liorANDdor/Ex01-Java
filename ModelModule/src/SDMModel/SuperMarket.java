@@ -4,11 +4,13 @@ import SDMGenerated.SDMItem;
 import SDMGenerated.SDMStore;
 import SDMGenerated.SuperDuperMarketDescriptor;
 
+import java.util.ArrayList;
+import java.util.stream.*;
 import java.util.HashMap;
 import java.util.List;
 
 public class SuperMarket {
-    // /Users/dor.cohen/Downloads/ex1-big.xml
+
     private HashMap<Integer, Store> stores = new  HashMap<Integer ,Store>();
     private HashMap<Integer ,Item> items = new  HashMap<Integer ,Item>();
 
@@ -33,52 +35,28 @@ public class SuperMarket {
 
         List<SDMItem>itemsSDM = superMarketSDM.getSDMItems().getSDMItem();
         List<SDMStore>storesSDM = superMarketSDM.getSDMStores().getSDMStore();
-        for(SDMItem sdmItem : itemsSDM){
-            Item newItem = Item.createInstanceBySDM(sdmItem);
-            instance.getItems().put(newItem.getId(),newItem);
-        }
 
         for(SDMStore sdmStore : storesSDM){
             Store newStore = Store.createInstanceBySDM(sdmStore);
             instance.getStores().put(newStore.getId(), newStore);
         }
+        List<Store> result = new ArrayList<>();
+
+        for(SDMItem sdmItem : itemsSDM){
+            List<Store> listWhoSellTheItem =
+                    (List<Store>) instance.getStores().values().stream()
+                            .filter(store -> store.isItemSold(sdmItem.getId())).collect(Collectors.toList());
+            Item newItem = Item.createInstanceBySDM(sdmItem, listWhoSellTheItem);
+            instance.getItems().put(newItem.getId(),newItem);
+        }
+
+
 
         return instance;
     }
 
     public Item getItemByID(int itemId){
-        Item item = items.getOrDefault(itemId, null);
-        if (item ==null)
-            return null;//TODO error
-
+        Item item = items.get(itemId);
         return item;
-    }
-
-    public double getItemAveragePriceByID(int itemId){
-        double sumPriceOfItems = 0;
-
-        Item item = items.getOrDefault(itemId, null);
-        if(item.storesWhoSellTheItem == null)
-            return 0; //no stores sell the item
-        if (item ==null)
-            //TODO error
-            return 0;
-        int numberOfStoresSellTheItem =  item.storesWhoSellTheItem.size();
-        for (Store store : item.storesWhoSellTheItem){
-            sumPriceOfItems = store.getItemPrice(itemId);
-        }
-        return sumPriceOfItems/numberOfStoresSellTheItem;
-    }
-
-    public int getNumberOfTimesItemWasPurchased(int itemId){
-        int numberOfTimeItemPurched = 0;
-        Item item = items.getOrDefault(itemId, null);
-        if (item ==null)
-            //TODO error
-            return 0;
-        for (Store store : item.storesWhoSellTheItem){
-            numberOfTimeItemPurched = store.getNumberOfTimesItemWasSold(itemId);
-        }
-        return numberOfTimeItemPurched;
     }
 }

@@ -22,7 +22,7 @@ public class Sell {
         }
     }
 
-    private int price;
+    private double price;
     private int itemId;
     private int numberOfTimesItemWasSold;
 
@@ -34,7 +34,7 @@ public class Sell {
         return newSell;
     }
 
-    public int getPrice() {
+    public double getPrice() {
         return price;
     }
 
