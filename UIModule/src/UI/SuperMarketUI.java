@@ -1,10 +1,9 @@
 package UI;
 
 import SDMModel.*;
-import org.omg.Messaging.SYNC_WITH_TRANSPORT;
 
-import javax.print.DocFlavor;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class SuperMarketUI {
 
@@ -82,7 +81,7 @@ public class SuperMarketUI {
             HashMap<Integer, Store> stores = systemManager.getSuperMarket().getStores();
             for(Store store:stores.values()) {
                 System.out.println("#################################################");
-                printStore(store);
+                printStoreAndSells(store);
                 System.out.println("\n");
             }
         }
@@ -103,16 +102,20 @@ public class SuperMarketUI {
             System.out.println("You should load an xml file");
     }
 
+    private void printStoreAndSells(Store store) {
+        printStore(store);
+        System.out.println("Store Items: ");
+        for(Sell sell:store.getItemsToSell()) {
+            printSellOffer(sell);
+        }
+    }
+
     private void printStore(Store store) {
         List<Store.InfoOptions>list=new LinkedList<>();
         list.add(Store.InfoOptions.ID);
         list.add(Store.InfoOptions.Name);
         list.add(Store.InfoOptions.DeliveryPPK);
         System.out.println(systemManager.getStoreInfo(store,list));
-        System.out.println("Store Items: ");
-        for(Sell sell:store.getItemsToSell()) {
-            printSellOffer(sell);
-        }
     }
 
     private void printSellOffer(Sell sell) {
@@ -154,7 +157,80 @@ public class SuperMarketUI {
         }
     }
 
+    private int getInt(){
+        while (!scanner.hasNextInt()) { // <-- 'peeks' at, doesn't remove, the next token
+            System.out.println("Please enter a number (INT)!");
+            scanner.next(); // <-- skips over an invalid token
+        }
+
+        return scanner.nextInt();
+    }
+
+    private double getDouble(){
+        while (!scanner.hasNextDouble()) { // <-- 'peeks' at, doesn't remove, the next token
+            System.out.println("Please enter a number!");
+            scanner.next(); // <-- skips over an invalid token
+        }
+
+        return scanner.nextDouble();
+    }
+
+
     private void createOrder() {
+        Order emptyOrder = systemManager.getEmptyOrder();
+        systemManager.getSuperMarket().getStores().forEach((id, store) -> printStore(store));
+        System.out.println("Please Choose a store (by ID)");
+        int storeID = getInt();
+        while (!systemManager.isValidStoreId(storeID)){
+            System.out.println("Unknown ID, try again (by ID)");
+            storeID = getInt();
+        }
+        systemManager.setStoreOfOrderByID(storeID,emptyOrder);
+        System.out.println("Please enter a date");
+        scanner.nextLine();
+        System.out.println("Please enter a location");
+        scanner.nextLine();
+        int finalStoreID = storeID;
+        systemManager.getSuperMarket().getItems().forEach((id, item) -> {
+            List<Item.InfoOptions> list = new ArrayList<Item.InfoOptions>();
+            list.add(Item.InfoOptions.ItemId);
+            list.add(Item.InfoOptions.Name);
+            list.add(Item.InfoOptions.Category);
+            System.out.println(systemManager.getinfoItem(item, list));
+            String itemPrice = systemManager.getPriceOfItemByStoreId(item, finalStoreID);
+            System.out.println("Item price: " + itemPrice);
+        });
+        boolean isContinue =true;
+        while (isContinue){
+            System.out.println("Please choose item by put ID");
+            int itemId = getInt();
+            while (!systemManager.isValidItemId(itemId)){
+                System.out.println("Unknown item ID, try again (by ID)");
+                itemId = getInt();
+            }
+            Item.PurchaseCategory category =systemManager.getPurchaseCategory(itemId);
+            System.out.println("Please Enter QUANTITY (" + category + ")");
+            double quantity;
+            if(category.equals(Item.PurchaseCategory.QUANTITY))
+                quantity=getInt();
+            else
+                quantity=getDouble();
+            if(systemManager.checkIfStoreSellAnItem(storeID,itemId)){
+                emptyOrder.addAnItem(itemId,quantity);
+                System.out.println("Item was added to order");
+            }
+            else
+                System.out.println("this item is not an option");
+            System.out.println("Press Q if you dont want another item, or any key to continue");
+            String userWantToContinue = scanner.nextLine();
+            if(userWantToContinue.equals("q")||userWantToContinue.equals("Q"))
+                isContinue = false;
+        }
+        systemManager.getOrderInfo(emptyOrder);
+        System.out.println("Press Y if you to commit the order");
+        String userWantToCommit = scanner.nextLine();
+        if(userWantToCommit.equals("y")||userWantToCommit.equals("Y"))
+            systemManager.commitOrder(emptyOrder);
 
     }
 
