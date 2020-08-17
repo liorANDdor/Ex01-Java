@@ -20,22 +20,15 @@ public class SuperMarketUI {
     }
 
     private  eMainMenu handleSelection(int length) {
-        String userSelectionAsString;
-        Integer userSelectionAsInt = 0;
+
+        int userSelectionAsInt = 0;
         boolean validOption = false;
         do {
-            userSelectionAsString = scanner.nextLine();
-            try {
-                userSelectionAsInt = Integer.parseInt(userSelectionAsString);
-                if (userSelectionAsInt <= length && userSelectionAsInt >= 1)
-                    validOption = true;
-                else
-                    System.out.println("Input not in range");
-            } catch (Exception Ex) {
-                System.out.println("Input should be a number!");
-                validOption = false;
-            }
-
+            userSelectionAsInt = IO.getInt();
+            if (userSelectionAsInt <= length && userSelectionAsInt >= 1)
+                validOption = true;
+            else
+                System.out.println("Input not in range");
         }
         while (!validOption);
 
@@ -134,14 +127,20 @@ public class SuperMarketUI {
     private void printItem(Item item) {
         System.out.println("________");
         List <Item.InfoOptions>list = new ArrayList<Item.InfoOptions>();
-        list.add(Item.InfoOptions.ItemId);
-        list.add(Item.InfoOptions.Name);
-        list.add(Item.InfoOptions.Category);
+        printStoreIDNamePPK(item);
         list.add(Item.InfoOptions.NumberOfStoresSellTheItem);
         list.add(Item.InfoOptions.ItemAveragePrice);
         list.add(Item.InfoOptions.NumberOfTimesItemWasSold);
         System.out.println(systemManager.getinfoItem(item,list));
 
+    }
+
+    private void printStoreIDNamePPK(Item item) {
+        List<Item.InfoOptions> list = new ArrayList<Item.InfoOptions>();
+        list.add(Item.InfoOptions.ItemId);
+        list.add(Item.InfoOptions.Name);
+        list.add(Item.InfoOptions.Category);
+        System.out.print(systemManager.getinfoItem(item, list));
     }
 
     private void loadXMLFile() {
@@ -157,33 +156,14 @@ public class SuperMarketUI {
         }
     }
 
-    private int getInt(){
-        while (!scanner.hasNextInt()) { // <-- 'peeks' at, doesn't remove, the next token
-            System.out.println("Please enter a number (INT)!");
-            scanner.next(); // <-- skips over an invalid token
-        }
-
-        return scanner.nextInt();
-    }
-
-    private double getDouble(){
-        while (!scanner.hasNextDouble()) { // <-- 'peeks' at, doesn't remove, the next token
-            System.out.println("Please enter a number!");
-            scanner.next(); // <-- skips over an invalid token
-        }
-
-        return scanner.nextDouble();
-    }
-
-
     private void createOrder() {
         Order emptyOrder = systemManager.getEmptyOrder();
         systemManager.getSuperMarket().getStores().forEach((id, store) -> printStore(store));
         System.out.println("Please Choose a store (by ID)");
-        int storeID = getInt();
+        int storeID = IO.getInt();
         while (!systemManager.isValidStoreId(storeID)){
             System.out.println("Unknown ID, try again (by ID)");
-            storeID = getInt();
+            storeID = IO.getInt();
         }
         systemManager.setStoreOfOrderByID(storeID,emptyOrder);
         System.out.println("Please enter a date");
@@ -192,29 +172,25 @@ public class SuperMarketUI {
         scanner.nextLine();
         int finalStoreID = storeID;
         systemManager.getSuperMarket().getItems().forEach((id, item) -> {
-            List<Item.InfoOptions> list = new ArrayList<Item.InfoOptions>();
-            list.add(Item.InfoOptions.ItemId);
-            list.add(Item.InfoOptions.Name);
-            list.add(Item.InfoOptions.Category);
-            System.out.println(systemManager.getinfoItem(item, list));
+            printStoreIDNamePPK(item);
             String itemPrice = systemManager.getPriceOfItemByStoreId(item, finalStoreID);
-            System.out.println("Item price: " + itemPrice);
+            System.out.println("Item price: " + itemPrice + "\n");
         });
         boolean isContinue =true;
         while (isContinue){
             System.out.println("Please choose item by put ID");
-            int itemId = getInt();
+            int itemId = IO.getInt();
             while (!systemManager.isValidItemId(itemId)){
                 System.out.println("Unknown item ID, try again (by ID)");
-                itemId = getInt();
+                itemId = IO.getInt();
             }
             Item.PurchaseCategory category =systemManager.getPurchaseCategory(itemId);
             System.out.println("Please Enter QUANTITY (" + category + ")");
             double quantity;
             if(category.equals(Item.PurchaseCategory.QUANTITY))
-                quantity=getInt();
+                quantity=IO.getInt();
             else
-                quantity=getDouble();
+                quantity=IO.getDouble();
             if(systemManager.checkIfStoreSellAnItem(storeID,itemId)){
                 emptyOrder.addAnItem(itemId,quantity);
                 System.out.println("Item was added to order");
@@ -231,7 +207,6 @@ public class SuperMarketUI {
         String userWantToCommit = scanner.nextLine();
         if(userWantToCommit.equals("y")||userWantToCommit.equals("Y"))
             systemManager.commitOrder(emptyOrder);
-
     }
 
 
