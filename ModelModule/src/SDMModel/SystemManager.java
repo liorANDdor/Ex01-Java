@@ -40,8 +40,11 @@ public class SystemManager {
 
     public StringBuilder getinfoItem(Item item, List<Item.InfoOptions>list){
         StringBuilder itemInfo = new StringBuilder();
-        for (Item.InfoOptions option : list){
-            itemInfo.append(String.join(" ", option.toString().split("(?=[A-Z])"))).append(": ").append(option.getInfo(item)).append("\n");
+        for (Item.InfoOptions option : list) {
+            itemInfo
+                    .append(String.join(" ", option.toString().split("(?=[A-Z])")))
+                    .append(": ").append(option.getInfo(item))
+                    .append("\n");
         }
 
         return itemInfo;
@@ -50,7 +53,10 @@ public class SystemManager {
     public StringBuilder getInfoSell(Sell sell, List<Sell.InfoOptions>list){
         StringBuilder sellInfo = new StringBuilder();
         for (Sell.InfoOptions option : list) {
-            sellInfo.append(String.join(" ", option.toString().split("(?=[A-Z])"))).append(": ").append(option.getInfo(sell)).append("\n");
+            sellInfo
+                    .append(String.join(" ", option.toString().split("(?=[A-Z])")))
+                    .append(": ").append(option.getInfo(sell))
+                    .append("\n");
         }
         return sellInfo;
     }
@@ -58,7 +64,10 @@ public class SystemManager {
     public StringBuilder getStoreInfo(Store store , List<Store.InfoOptions>list){
         StringBuilder storeInfo = new StringBuilder();
         for (Store.InfoOptions option : list) {
-            storeInfo.append(option.toString()).append(": ").append(option.getInfo(store)).append("\n");
+            storeInfo
+                    .append(option.toString())
+                    .append(": ").append(option.getInfo(store))
+                    .append("\n");
         }
         return storeInfo;
     }
@@ -69,7 +78,12 @@ public class SystemManager {
     }
 
     public boolean isValidStoreId(int storeID) {
-        return superMarket.getStores().keySet().stream().filter(key -> key == storeID).count() == 1;
+        return superMarket
+                .getStores()
+                .keySet()
+                .stream()
+                .filter(key -> key == storeID)
+                .count() == 1;
     }
 
     public void setStoreOfOrderByID(int storeID, Order emptyOrder) {
@@ -78,7 +92,12 @@ public class SystemManager {
 
     public String getPriceOfItemByStoreId(Item item, int finalStoreID) {
         Store store = superMarket.getStores().get(finalStoreID);
-        Sell sellFound = (Sell)store.getItemsToSell().stream().filter(sell->sell.getItemId()==item.getId()).findAny().orElse(null);
+        Sell sellFound = (Sell)store
+                .getItemsToSell()
+                .stream()
+                .filter(sell->sell.getItemId()==item.getId())
+                .findAny()
+                .orElse(null);
         if(sellFound != null)
             return String.valueOf(sellFound.getPrice());
         else
@@ -86,11 +105,18 @@ public class SystemManager {
     }
 
     public boolean isValidItemId(int itemId) {
-        return superMarket.getItems().keySet().stream().anyMatch(key->itemId == key);
+        return superMarket
+                .getItems()
+                .keySet()
+                .stream()
+                .anyMatch(key->itemId == key);
     }
 
     public Item.PurchaseCategory getPurchaseCategory(int itemId) {
-        return superMarket.getItems().get(itemId).getPurchaseCategory();
+        return superMarket
+                .getItems()
+                .get(itemId)
+                .getPurchaseCategory();
     }
 
     public boolean checkIfStoreSellAnItem(int storeID, int itemId) {

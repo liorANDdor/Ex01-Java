@@ -3,7 +3,6 @@ package UI;
 import SDMModel.*;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class SuperMarketUI {
 
@@ -127,7 +126,7 @@ public class SuperMarketUI {
     private void printItem(Item item) {
         System.out.println("________");
         List <Item.InfoOptions>list = new ArrayList<Item.InfoOptions>();
-        printStoreIDNamePPK(item);
+        printItemIDNamePPK(item);
         list.add(Item.InfoOptions.NumberOfStoresSellTheItem);
         list.add(Item.InfoOptions.ItemAveragePrice);
         list.add(Item.InfoOptions.NumberOfTimesItemWasSold);
@@ -135,7 +134,7 @@ public class SuperMarketUI {
 
     }
 
-    private void printStoreIDNamePPK(Item item) {
+    private void printItemIDNamePPK(Item item) {
         List<Item.InfoOptions> list = new ArrayList<Item.InfoOptions>();
         list.add(Item.InfoOptions.ItemId);
         list.add(Item.InfoOptions.Name);
@@ -172,7 +171,7 @@ public class SuperMarketUI {
         scanner.nextLine();
         int finalStoreID = storeID;
         systemManager.getSuperMarket().getItems().forEach((id, item) -> {
-            printStoreIDNamePPK(item);
+            printItemIDNamePPK(item);
             String itemPrice = systemManager.getPriceOfItemByStoreId(item, finalStoreID);
             System.out.println("Item price: " + itemPrice + "\n");
         });
