@@ -10,10 +10,13 @@ import java.util.HashMap;
 import java.util.List;
 
 public class SuperMarket {
+    private Integer numberOfOrders = 0;
+
+
 
     private HashMap<Integer, Store> stores = new  HashMap<Integer ,Store>();
     private HashMap<Integer ,Item> items = new  HashMap<Integer ,Item>();
-
+    private HashMap<Integer, Order> orders = new  HashMap<Integer ,Order>();
     public HashMap<Integer, Store> getStores() {
         return stores;
     }
@@ -58,5 +61,17 @@ public class SuperMarket {
     public Item getItemByID(int itemId){
         Item item = items.get(itemId);
         return item;
+    }
+
+
+    public Integer getNumberOfOrders() {
+        return numberOfOrders;
+    }
+
+    public void increaseOrderNumber() {
+        this.numberOfOrders=+1;
+    }
+    public HashMap<Integer, Order> getOrders() {
+        return orders;
     }
 }

@@ -24,7 +24,7 @@ public class Sell {
 
     private double price;
     private int itemId;
-    private int numberOfTimesItemWasSold;
+    private double numberOfTimesItemWasSold;
 
 
     public static Sell createInstanceBySDM(SDMSell sell) {
@@ -50,12 +50,12 @@ public class Sell {
         this.itemId = itemId;
     }
 
-    public int getNumberOfTimesItemWasSold() {
+    public double getNumberOfTimesItemWasSold() {
         return numberOfTimesItemWasSold;
     }
 
-    public void increaseNumberOfTimesItemWasSold(int itemId) {
-        this.numberOfTimesItemWasSold=numberOfTimesItemWasSold+1;
+    public void increaseNumberOfTimesItemWasSold(double quantity) {
+        this.numberOfTimesItemWasSold=numberOfTimesItemWasSold + quantity;
     }
 
 }

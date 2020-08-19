@@ -2,8 +2,12 @@ package UI;
 
 import SDMModel.*;
 
+import java.awt.*;
+import java.text.SimpleDateFormat;
+import java.time.LocalTime;
 import java.util.*;
-
+import java.util.List;
+import java.time.LocalDateTime;
 public class SuperMarketUI {
 
     private SystemManager systemManager = new SystemManager();
@@ -60,12 +64,16 @@ public class SuperMarketUI {
                     createOrder();
                     break;
                 case ShowHistory:
+                    printOrder();
                     System.out.println("history");
                     break;
 
             }
         } while (!userSelection.equals(eMainMenu.Exit)) ;
 
+    }
+
+    private void showOrders() {
     }
 
     private void showStores() {
@@ -146,6 +154,7 @@ public class SuperMarketUI {
         System.out.println("Please enter full path of your XML file.");
         String fullPath = scanner.nextLine();
         fullPath = "C:\\Users\\Lior\\IdeaProjects\\ex1-small.xml";
+        fullPath = "/Users/dor.cohen/Downloads/ex1-big.xml";
         systemManager.LoadXMLFileAndCheckIt(fullPath);
         if(systemManager.getXmlUtilities().getIsXmlOk())
             System.out.println("Loadeded successfully");
@@ -164,11 +173,37 @@ public class SuperMarketUI {
             System.out.println("Unknown ID, try again (by ID)");
             storeID = IO.getInt();
         }
-        systemManager.setStoreOfOrderByID(storeID,emptyOrder);
-        System.out.println("Please enter a date");
-        scanner.nextLine();
+        systemManager.setStoreOfOrderByID(storeID, emptyOrder);
+        System.out.println("Please enter delivery date (dd/mm-hh:mm format)");
+        Scanner scan=new Scanner(System.in);
+        boolean fixdate=false;
+        while (fixdate==false) {
+            String date1=scanner.nextLine();
+            try
+            {
+                Date date=new SimpleDateFormat("dd/MM-hh:mm").parse(date1);
+                date.setYear(120);
+                fixdate=true;
+                emptyOrder.setDateOfOrder(date);
+            }
+            catch (Exception e)
+            {
+                System.out.println("The date that selected not fix, please select fix date");
+                fixdate=false;
+            }
+
+        }
+
+
         System.out.println("Please enter a location");
-        scanner.nextLine();
+        Integer xCordinate = IO.getInt();
+        Integer yCordinate = IO.getInt();
+        while (!emptyOrder.setLocationOfClient(new Point(xCordinate, yCordinate))){
+            System.out.println("Cordinates must be between 0-50");
+             xCordinate = IO.getInt();
+             yCordinate = IO.getInt();
+        }
+        
         int finalStoreID = storeID;
         systemManager.getSuperMarket().getItems().forEach((id, item) -> {
             printItemIDNamePPK(item);
@@ -184,14 +219,15 @@ public class SuperMarketUI {
                 itemId = IO.getInt();
             }
             Item.PurchaseCategory category =systemManager.getPurchaseCategory(itemId);
-            System.out.println("Please Enter QUANTITY (" + category + ")");
+
             double quantity;
-            if(category.equals(Item.PurchaseCategory.QUANTITY))
-                quantity=IO.getInt();
-            else
-                quantity=IO.getDouble();
             if(systemManager.checkIfStoreSellAnItem(storeID,itemId)){
-                emptyOrder.addAnItem(itemId,quantity);
+                System.out.println("Please Enter QUANTITY (" + category + ")");
+                if(category.equals(Item.PurchaseCategory.QUANTITY))
+                    quantity=IO.getInt();
+                else
+                    quantity=IO.getDouble();
+                systemManager.addAnItemToOrder(emptyOrder, storeID, itemId, quantity);
                 System.out.println("Item was added to order");
             }
             else
@@ -201,14 +237,62 @@ public class SuperMarketUI {
             if(userWantToContinue.equals("q")||userWantToContinue.equals("Q"))
                 isContinue = false;
         }
-        systemManager.getOrderInfo(emptyOrder);
+
+        getOrderInfo(emptyOrder);
         System.out.println("Press Y if you to commit the order");
         String userWantToCommit = scanner.nextLine();
         if(userWantToCommit.equals("y")||userWantToCommit.equals("Y"))
             systemManager.commitOrder(emptyOrder);
     }
 
+    public void getOrderInfo(Order order){
+        List <Item.InfoOptions> itemAttributes = new ArrayList<Item.InfoOptions>();
+        List <Sell.InfoOptions> sellAttributes = new ArrayList<>();
+        itemAttributes.add(Item.InfoOptions.ItemId);
+        itemAttributes.add(Item.InfoOptions.Name);
+        itemAttributes.add(Item.InfoOptions.Category);
+        Integer itemID;
+        double itemQuantity;
+        double itemPrice;
+        for (Item item: order.getGetItemsToOrder().values()){
+            itemID = item.getId();
+            System.out.println(systemManager.getinfoItem(item, itemAttributes));
+            itemPrice = order.getStoreToOrderFrom().getItemPrice(itemID);
+            itemQuantity = order.getItemsQuantity().get(itemID);
+            System.out.println("Item price: " + itemPrice);
+            System.out.println("Item quantity: " + itemQuantity);
+            System.out.println("Item total price: " + itemPrice * itemQuantity);
+        }
+        printDistanceAndPPK(order);
+
+    }
+
+    private void printDistanceAndPPK(Order order) {
+        systemManager.calculateDistance(order);
+        System.out.println("\n\nDistance from store: " + order.getDeliveryDistance());
+        System.out.println("PPK of store: " + order.getStoreToOrderFrom().getDeliveryPpk());
+        System.out.println("Shipment total price: " + (double)Math.round(  order.getShipmentPrice() * 1000d) / 1000d);
+
+    }
+
+    private void printOrder() {
+        HashMap<Integer,Order> allOrders =  systemManager.getSuperMarket().getOrders();
+        for(Order order: allOrders.values()) {
+            System.out.println("________");
+            List<Order.InfoOptions> list = new ArrayList<>();
+
+            list.add(Order.InfoOptions.OrderId);
+            list.add(Order.InfoOptions.Date);
+            list.add(Order.InfoOptions.StoreNameAndId);
+            list.add(Order.InfoOptions.ItemsPrice);
+            list.add(Order.InfoOptions.ShipmentPrice);
+            list.add(Order.InfoOptions.TotalPrice);
+            System.out.println(systemManager.getinfoOrder(order, list));
+        }
+    }
 
 
 
 }
+
+

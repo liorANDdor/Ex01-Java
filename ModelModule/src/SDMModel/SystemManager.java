@@ -2,11 +2,8 @@ package SDMModel;
 
 import SDMGenerated.SuperDuperMarketDescriptor;
 
-import java.util.LinkedList;
+import java.awt.*;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class SystemManager {
 
@@ -41,6 +38,18 @@ public class SystemManager {
     public StringBuilder getinfoItem(Item item, List<Item.InfoOptions>list){
         StringBuilder itemInfo = new StringBuilder();
         for (Item.InfoOptions option : list) {
+            itemInfo
+                    .append(String.join(" ", option.toString().split("(?=[A-Z])")))
+                    .append(": ").append(option.getInfo(item))
+                    .append("\n");
+        }
+
+        return itemInfo;
+    }
+
+    public StringBuilder getinfoOrder(Order item, List<Order.InfoOptions>list){
+        StringBuilder itemInfo = new StringBuilder();
+        for (Order.InfoOptions option : list) {
             itemInfo
                     .append(String.join(" ", option.toString().split("(?=[A-Z])")))
                     .append(": ").append(option.getInfo(item))
@@ -120,12 +129,40 @@ public class SystemManager {
     }
 
     public boolean checkIfStoreSellAnItem(int storeID, int itemId) {
-        return true;
+        Store store = superMarket.getStores().get(storeID);
+        return store.isItemSold(itemId);
     }
 
-    public void getOrderInfo(Order emptyOrder) {
+    public void commitOrder(Order order) {
+        Integer  orderNumber = superMarket.getNumberOfOrders() + 1;
+        superMarket.increaseOrderNumber();
+        order.setOrderNumber(orderNumber);
+        for(Item item: order.getGetItemsToOrder().values()){
+            item.increaseNumberOfTimesItemWasSold(order.getItemsQuantity().get(item.getId()));
+            for(Sell sell:order.getStoreToOrderFrom().getItemsToSell()){
+                if (sell.getItemId() == item.getId())
+                    sell.increaseNumberOfTimesItemWasSold(order.getItemsQuantity().get(item.getId()));
+            }
+        }
+        superMarket.getOrders().put(orderNumber, order);
     }
 
-    public void commitOrder(Order emptyOrder) {
+    public void addAnItemToOrder(Order order, int storeId, int itemId, double quantity) {
+        order.getGetItemsToOrder().put(itemId, superMarket.getItemByID(itemId));
+        order.getItemsQuantity().put(itemId, quantity);
+        double itemPrice = superMarket.getStores().get(storeId).getItemPrice(itemId);
+        order.increaseOrderTotalPrice(itemPrice*quantity);
+
     }
+
+    public void calculateDistance(Order order){
+        Point clientLocation = order.getLocationOfClient();
+        Point storeLocation = order.getStoreToOrderFrom().getLocation();
+        order.setDeliveryDistance(Math.sqrt((clientLocation.x - storeLocation.x) *(clientLocation.x - storeLocation.x)
+                + (clientLocation.y - storeLocation.y) *(clientLocation.y - storeLocation.y)));
+        order.setShipmentPrice(order.getDeliveryDistance() * order.getStoreToOrderFrom().getDeliveryPpk());
+
+    }
+
+
 }

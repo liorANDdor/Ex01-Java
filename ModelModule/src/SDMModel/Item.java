@@ -103,5 +103,10 @@ public class Item {
         return totalNumberOfTimePurchased;
     }
 
+    public  void increaseNumberOfTimesItemWasSold(double quantity) {
+        totalNumberOfTimePurchased =+quantity;
+    }
+
+
 
 }

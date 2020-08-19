@@ -99,7 +99,7 @@ public class Store {
         this.name = name;
     }
 
-    public int getNumberOfTimesItemWasSold(int itemId) {
+    public double getNumberOfTimesItemWasSold(int itemId) {
         for(Sell sell:itemsToSell){
             if(sell.getItemId() == itemId){
                 return sell.getNumberOfTimesItemWasSold();
