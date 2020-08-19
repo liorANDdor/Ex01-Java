@@ -254,7 +254,7 @@ public class SuperMarketUI {
         Integer itemID;
         double itemQuantity;
         double itemPrice;
-        for (Item item: order.getGetItemsToOrder().values()){
+        for (Item item: order.getItemsToOrder().values()){
             itemID = item.getId();
             System.out.println(systemManager.getinfoItem(item, itemAttributes));
             itemPrice = order.getStoreToOrderFrom().getItemPrice(itemID);

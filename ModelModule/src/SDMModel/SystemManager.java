@@ -137,7 +137,7 @@ public class SystemManager {
         Integer  orderNumber = superMarket.getNumberOfOrders() + 1;
         superMarket.increaseOrderNumber();
         order.setOrderNumber(orderNumber);
-        for(Item item: order.getGetItemsToOrder().values()){
+        for(Item item: order.getItemsToOrder().values()){
             item.increaseNumberOfTimesItemWasSold(order.getItemsQuantity().get(item.getId()));
             for(Sell sell:order.getStoreToOrderFrom().getItemsToSell()){
                 if (sell.getItemId() == item.getId())
@@ -148,11 +148,15 @@ public class SystemManager {
     }
 
     public void addAnItemToOrder(Order order, int storeId, int itemId, double quantity) {
-        order.getGetItemsToOrder().put(itemId, superMarket.getItemByID(itemId));
-        order.getItemsQuantity().put(itemId, quantity);
+       if  (order.getItemsToOrder().containsKey(itemId)){
+           order.getItemsQuantity().put(itemId, (order.getItemsQuantity().get(itemId) + quantity));
+        }
+        else {
+           order.getItemsToOrder().put(itemId, superMarket.getItemByID(itemId));
+           order.getItemsQuantity().put(itemId, quantity);
+       }
         double itemPrice = superMarket.getStores().get(storeId).getItemPrice(itemId);
-        order.increaseOrderTotalPrice(itemPrice*quantity);
-
+        order.increaseOrderTotalPrice(itemPrice * quantity);
     }
 
     public void calculateDistance(Order order){

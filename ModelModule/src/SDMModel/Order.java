@@ -92,7 +92,7 @@ public class Order {
         return dateOfOrder;
     }
 
-    public HashMap<Integer, Item> getGetItemsToOrder() {
+    public HashMap<Integer, Item> getItemsToOrder() {
         return itemsToOrder;
     }
     public Store getStoreToOrderFrom() {
