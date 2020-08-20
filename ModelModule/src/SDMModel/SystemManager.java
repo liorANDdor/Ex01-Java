@@ -169,4 +169,20 @@ public class SystemManager {
     }
 
 
+    public void isfixedLocationAndSetToOrder(Point point, Order emptyOrder) throws Exception {
+        if(point.x>50||point.x<1||point.y>50||point.y<1)
+            throw new Exception("Locaion should be 1-50");
+        else if (isOrderLocaionAndStoresLocationMatch(point))
+            throw new Exception("Locaion is like a store location");
+        else
+            emptyOrder.setLocationOfClient(point);
+    }
+
+    private boolean isOrderLocaionAndStoresLocationMatch(Point point) {
+        return superMarket
+                .getStores()
+                .values()
+                .stream()
+                .anyMatch(store -> store.getLocation().equals(point));
+    }
 }

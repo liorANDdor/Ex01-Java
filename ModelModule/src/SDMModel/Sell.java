@@ -55,7 +55,7 @@ public class Sell {
     }
 
     public void increaseNumberOfTimesItemWasSold(double quantity) {
-        this.numberOfTimesItemWasSold=numberOfTimesItemWasSold + quantity;
+        this.numberOfTimesItemWasSold = numberOfTimesItemWasSold + quantity;
     }
 
 }

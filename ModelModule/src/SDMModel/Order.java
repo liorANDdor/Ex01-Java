@@ -8,7 +8,7 @@ public class Order {
 
 
     public enum InfoOptions {
-        OrderId, Date, StoreNameAndId, ItemsPrice, ShipmentPrice, TotalPrice, DeliveryDistance;
+        OrderId, Date, StoreNameAndId, ItemsPrice, ShipmentPrice, TotalPrice, DeliveryDistance, AmountOfKindsOfItems, AmountOfAllItems;
 
 
         public String getInfo(Order order) {
@@ -25,28 +25,39 @@ public class Order {
                 case ItemsPrice:
                     return String.valueOf(order.getItemsPrice());
                 case TotalPrice:
-                    return String.valueOf(order.getItemsPrice() + order.getShipmentPrice());
+                    return String.valueOf((order.getItemsPrice() + order.getShipmentPrice()));
                 case DeliveryDistance:
                     return String.valueOf(order.getDeliveryDistance());
+                case AmountOfKindsOfItems:
+                    return String.valueOf(order.getAmountOfKindsOfItems());
+                case AmountOfAllItems:
+                    return String.valueOf(order.getAmountOfAllItems());
                 default:
                     return "Unknown";
             }
         }
     }
 
+    private double getAmountOfAllItems() {
+        return itemsQuantity.values().stream().mapToDouble(i->i).sum();
+    }
+
+    private int getAmountOfKindsOfItems() {
+        return itemsToOrder.keySet().size();
+    }
+
+    private Integer orderNumber;
+    private Store storeToOrderFrom;
+    private HashMap<Integer ,Item> itemsToOrder = new  HashMap<Integer ,Item>();
+    private Point locationOfClient;
+    private HashMap<Integer , Double> itemsQuantity = new  HashMap<Integer ,Double>();
+    private Date dateOfOrder;
+    private Double totalPrice;
+
     public void setDeliveryDistance(double deliveryDistance) {
         this.deliveryDistance = deliveryDistance;
     }
 
-    public void setTotalPrice(Double totalPrice) {
-        this.totalPrice = totalPrice;
-    }
-
-    public Double getTotalPrice() {
-        return totalPrice;
-    }
-
-    private Double totalPrice;
     private Double itemsPrice = 0.0;
 
     public double getDeliveryDistance() {
@@ -70,16 +81,6 @@ public class Order {
     public void setShipmentPrice(Double price) {
         shipmentPrice = price;
     }
-
-    private Integer orderNumber;
-    private Store storeToOrderFrom;
-    private HashMap<Integer ,Item> itemsToOrder = new  HashMap<Integer ,Item>();
-    private Point locationOfClient;
-    private HashMap<Integer , Double> itemsQuantity = new  HashMap<Integer ,Double>();
-
-
-
-    private Date dateOfOrder;
 
     public void setDateOfOrder(Date dateOfOrder) {
         this.dateOfOrder = dateOfOrder;
@@ -107,14 +108,8 @@ public class Order {
         return locationOfClient;
     }
 
-    public boolean setLocationOfClient(Point locationOfClient) {
-        if(locationOfClient.x>50 || locationOfClient.x < 0 || locationOfClient.y>50 || locationOfClient.y < 0 )
-            return false;
-        else {
-            this.locationOfClient = locationOfClient;
-            return true;
-        }
-
+    public void setLocationOfClient(Point locationOfClient) {
+        this.locationOfClient = locationOfClient;
     }
 
     public void setOrderNumber(Integer orderNumber) {

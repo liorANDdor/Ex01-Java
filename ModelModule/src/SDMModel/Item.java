@@ -104,7 +104,7 @@ public class Item {
     }
 
     public  void increaseNumberOfTimesItemWasSold(double quantity) {
-        totalNumberOfTimePurchased =+quantity;
+        totalNumberOfTimePurchased +=quantity;
     }
 
 
