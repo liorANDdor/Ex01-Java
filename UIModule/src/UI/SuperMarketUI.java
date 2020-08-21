@@ -163,8 +163,8 @@ public class SuperMarketUI {
     private void loadXMLFile() {
         System.out.println("Please enter full path of your XML file.");
         String fullPath = scanner.nextLine();
-        fullPath = "C:\\Users\\Lior\\IdeaProjects\\ex1-small.xml";
-        //fullPath = "/Users/dor.cohen/Downloads/ex1-big.xml";
+        //fullPath = "C:\\Users\\Lior\\IdeaProjects\\ex1-small.xml";
+        fullPath = "/Users/dor.cohen/Downloads/ex1-big.xml";
         systemManager.LoadXMLFileAndCheckIt(fullPath);
         if(systemManager.getXmlUtilities().getIsXmlOk())
             System.out.println("Loadeded successfully");
@@ -186,40 +186,9 @@ public class SuperMarketUI {
             }
             systemManager.setStoreOfOrderByID(storeID, emptyOrder);
             System.out.println("Please enter delivery date (dd/mm-hh:mm format)");
-            boolean fixdate = false;
-            while (fixdate == false) {
-                String date1 = scanner.nextLine();
-                if(date1.length()==11) {
-                    try {
-                        Date date = new SimpleDateFormat("dd/MM-hh:mm").parse(date1);
-                        date.setYear(120);
-                        fixdate = true;
-                        emptyOrder.setDateOfOrder(date);
-                    } catch (Exception e) {
-                        System.out.println("The date that selected not fix, please select fix date");
-                        fixdate = false;
-                    }
-                }
-                else
-                    System.out.println("The date that selected not fix, please select fix date");
-
-            }
-
-            boolean isfixedLocation = false;
-            do {
-                System.out.println("Please enter a location");
-                System.out.print("X: ");
-                Integer xCordinate = IO.getInt();
-                System.out.print("Y: ");
-                Integer yCordinate = IO.getInt();
-                try {
-                    systemManager.isfixedLocationAndSetToOrder(new Point(xCordinate, yCordinate), emptyOrder);
-                    isfixedLocation = true;
-                } catch (Exception e) {
-                    System.out.println(e.getMessage());
-                }
-
-            } while (!isfixedLocation);
+            verifyAndSetDate(emptyOrder);
+            System.out.println("Please enter a location");
+            verifyAndSetLocation(emptyOrder);
 
             int finalStoreID = storeID;
             systemManager.getSuperMarket().getItems().forEach((id, item) -> {
@@ -229,31 +198,9 @@ public class SuperMarketUI {
             });
             boolean isContinue = true;
             while (isContinue) {
-                System.out.println("Please choose item by put ID");
-                int itemId = IO.getInt();
-                while (!systemManager.isValidItemId(itemId)) {
-                    System.out.println("Unknown item ID, try again (by ID)");
-                    itemId = IO.getInt();
-                }
-                Item.PurchaseCategory category = systemManager.getPurchaseCategory(itemId);
+                isContinue = getItemsFromCustomer(emptyOrder, storeID);
 
-                double quantity;
-                if (systemManager.checkIfStoreSellAnItem(storeID, itemId)) {
-                    System.out.println("Please Enter QUANTITY (" + category + ")");
-                    if (category.equals(Item.PurchaseCategory.QUANTITY))
-                        quantity = IO.getInt();
-                    else
-                        quantity = IO.getDouble();
-                    systemManager.addAnItemToOrder(emptyOrder, storeID, itemId, quantity);
-                    System.out.println("Item was added to order");
-                } else
-                    System.out.println("this item is not an option");
-                System.out.println("Press Q if you dont want another item, or any key to continue");
-                String userWantToContinue = scanner.nextLine();
-                if (userWantToContinue.equals("q") || userWantToContinue.equals("Q"))
-                    isContinue = false;
             }
-
             getOrderInfo(emptyOrder);
             System.out.println("Press Y if you to commit the order");
             String userWantToCommit = scanner.nextLine();
@@ -262,6 +209,71 @@ public class SuperMarketUI {
         }
         else
             System.out.println("You should load an xml file");
+    }
+
+    private Boolean getItemsFromCustomer(Order order, Integer storeID){
+        System.out.println("Please choose item by put ID");
+        int itemId = IO.getInt();
+        while (!systemManager.isValidItemId(itemId)) {
+            System.out.println("Unknown item ID, try again (by ID)");
+            itemId = IO.getInt();
+        }
+        Item.PurchaseCategory category = systemManager.getPurchaseCategory(itemId);
+
+        double quantity;
+        if (systemManager.checkIfStoreSellAnItem(storeID, itemId)) {
+            System.out.println("Please Enter QUANTITY (" + category + ")");
+            if (category.equals(Item.PurchaseCategory.QUANTITY))
+                quantity = IO.getInt();
+            else
+                quantity = IO.getDouble();
+            systemManager.addAnItemToOrder(order, storeID, itemId, quantity);
+            System.out.println("Item was added to order");
+        } else
+            System.out.println("this item is not an option");
+        System.out.println("Press Q if you dont want another item, or any key to continue");
+        String userWantToContinue = scanner.nextLine();
+        if (userWantToContinue.equals("q") || userWantToContinue.equals("Q"))
+            return false;
+        return true;
+    }
+    private void verifyAndSetLocation(Order order) {
+
+        boolean isfixedLocation = false;
+        do {
+            System.out.print("X: ");
+            Integer xCordinate = IO.getInt();
+            System.out.print("Y: ");
+            Integer yCordinate = IO.getInt();
+            try {
+                systemManager.isfixedLocationAndSetToOrder(new Point(xCordinate, yCordinate), order);
+                isfixedLocation = true;
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+
+        } while (!isfixedLocation);
+
+    }
+    private void verifyAndSetDate(Order order) {
+        boolean fixdate = false;
+        while (fixdate == false) {
+            String dateFromUser = scanner.nextLine();
+            if(dateFromUser.length()==11) {
+                try {
+                    Date date = new SimpleDateFormat("dd/MM-hh:mm").parse(dateFromUser);
+                    date.setYear(120);
+                    fixdate = true;
+                    order.setDateOfOrder(date);
+                } catch (Exception e) {
+                    System.out.println("The date that selected not fix, please select fix date");
+                    fixdate = false;
+                }
+            }
+            else
+                System.out.println("The date that selected not fix, please select fix date");
+
+        }
     }
 
     public void getOrderInfo(Order order){
