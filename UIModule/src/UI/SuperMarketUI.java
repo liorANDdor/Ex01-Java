@@ -163,8 +163,8 @@ public class SuperMarketUI {
     private void loadXMLFile() {
         System.out.println("Please enter full path of your XML file.");
         String fullPath = scanner.nextLine();
-        //fullPath = "C:\\Users\\Lior\\IdeaProjects\\ex1-small.xml";
-        fullPath = "/Users/dor.cohen/Downloads/ex1-big.xml";
+        fullPath = "C:\\Users\\Lior\\IdeaProjects\\ex1-small.xml";
+        //fullPath = "/Users/dor.cohen/Downloads/ex1-big.xml";
         systemManager.LoadXMLFileAndCheckIt(fullPath);
         if(systemManager.getXmlUtilities().getIsXmlOk())
             System.out.println("Loadeded successfully");
@@ -189,22 +189,28 @@ public class SuperMarketUI {
             boolean fixdate = false;
             while (fixdate == false) {
                 String date1 = scanner.nextLine();
-                try {
-                    Date date = new SimpleDateFormat("dd/MM-hh:mm").parse(date1);
-                    date.setYear(120);
-                    fixdate = true;
-                    emptyOrder.setDateOfOrder(date);
-                } catch (Exception e) {
-                    System.out.println("The date that selected not fix, please select fix date");
-                    fixdate = false;
+                if(date1.length()==11) {
+                    try {
+                        Date date = new SimpleDateFormat("dd/MM-hh:mm").parse(date1);
+                        date.setYear(120);
+                        fixdate = true;
+                        emptyOrder.setDateOfOrder(date);
+                    } catch (Exception e) {
+                        System.out.println("The date that selected not fix, please select fix date");
+                        fixdate = false;
+                    }
                 }
+                else
+                    System.out.println("The date that selected not fix, please select fix date");
 
             }
 
             boolean isfixedLocation = false;
             do {
                 System.out.println("Please enter a location");
+                System.out.print("X: ");
                 Integer xCordinate = IO.getInt();
+                System.out.print("Y: ");
                 Integer yCordinate = IO.getInt();
                 try {
                     systemManager.isfixedLocationAndSetToOrder(new Point(xCordinate, yCordinate), emptyOrder);
