@@ -71,7 +71,12 @@ public class SuperMarket {
     public void increaseOrderNumber() {
         this.numberOfOrders=+1;
     }
+
     public HashMap<Integer, Order> getOrders() {
-        return orders;
+        HashMap<Integer, Order> allOrdersFromStores = new HashMap<>();
+        for(Store store :stores.values())
+            allOrdersFromStores.putAll(store.getOrders());
+
+        return allOrdersFromStores;
     }
 }

@@ -72,8 +72,6 @@ public class SuperMarketUI {
 
     }
 
-    private void showOrders() {
-    }
 
     private void showStores() {
         if(systemManager.isXmlLoaded()){
@@ -107,6 +105,18 @@ public class SuperMarketUI {
         for(Sell sell:store.getItemsToSell()) {
             printSellOffer(sell);
         }
+        for(Order order:store.getOrders().values()) {
+            List<Order.InfoOptions> list = new ArrayList<>();
+            list.add(Order.InfoOptions.Date);
+            list.add(Order.InfoOptions.AmountOfAllItems);
+            list.add(Order.InfoOptions.ItemsPrice);
+            list.add(Order.InfoOptions.ShipmentPrice);
+            list.add(Order.InfoOptions.TotalPrice);
+            System.out.println(systemManager.getinfoOrder(order, list));
+
+
+        }
+
     }
 
     private void printStore(Store store) {
@@ -114,6 +124,7 @@ public class SuperMarketUI {
         list.add(Store.InfoOptions.ID);
         list.add(Store.InfoOptions.Name);
         list.add(Store.InfoOptions.DeliveryPPK);
+        list.add(Store.InfoOptions.TotalEarning);
         System.out.println(systemManager.getStoreInfo(store,list));
     }
 
@@ -152,8 +163,8 @@ public class SuperMarketUI {
     private void loadXMLFile() {
         System.out.println("Please enter full path of your XML file.");
         String fullPath = scanner.nextLine();
-        fullPath = "C:\\Users\\Lior\\IdeaProjects\\ex1-small.xml";
-        //fullPath = "/Users/dor.cohen/Downloads/ex1-big.xml";
+        //fullPath = "C:\\Users\\Lior\\IdeaProjects\\ex1-small.xml";
+        fullPath = "/Users/dor.cohen/Downloads/ex1-big.xml";
         systemManager.LoadXMLFileAndCheckIt(fullPath);
         if(systemManager.getXmlUtilities().getIsXmlOk())
             System.out.println("Loadeded successfully");
@@ -262,7 +273,7 @@ public class SuperMarketUI {
             itemQuantity = order.getItemsQuantity().get(itemID);
             System.out.println("Item price: " + itemPrice);
             System.out.println("Item quantity: " + itemQuantity);
-            System.out.println("Item total price: " + itemPrice * itemQuantity +"\n");
+            System.out.println("Item total price: " + String.valueOf(((itemPrice * itemQuantity)* 1000d) / 1000d) +"\n");
         }
         printDistanceAndPPK(order);
     }
@@ -275,13 +286,15 @@ public class SuperMarketUI {
 
     }
 
+
+
     private void showHistory() {
         if(systemManager.isXmlLoaded()){
             HashMap<Integer,Order> allOrders =  systemManager.getSuperMarket().getOrders();
+
             for(Order order: allOrders.values()) {
                 System.out.println("________");
                 List<Order.InfoOptions> list = new ArrayList<>();
-
                 list.add(Order.InfoOptions.OrderId);
                 list.add(Order.InfoOptions.Date);
                 list.add(Order.InfoOptions.StoreNameAndId);
@@ -291,6 +304,7 @@ public class SuperMarketUI {
                 list.add(Order.InfoOptions.ShipmentPrice);
                 list.add(Order.InfoOptions.TotalPrice);
                 System.out.println(systemManager.getinfoOrder(order, list));
+
             }
 
 

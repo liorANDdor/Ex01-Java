@@ -6,13 +6,14 @@ import SDMGenerated.SDMStore;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 
 public class Store {
 
     public enum InfoOptions {
-        Name, ID, Location, DeliveryPPK;
+        Name, ID, Location, DeliveryPPK, TotalEarning;
 
         public String getInfo(Store store) {
             switch (this) {
@@ -24,18 +25,31 @@ public class Store {
                     return String.valueOf(store.getLocation());
                 case DeliveryPPK:
                     return String.valueOf(store.getDeliveryPpk());
+                case TotalEarning:
+                    return String.valueOf(store.getTotalEarning());
                 default:
                     return "Unknown";
             }
         }
     }
 
+    private Double totalEarning = 0.0;
+    HashMap<Integer, Order> orders = new HashMap<>();
     private String name;
     private int deliveryPpk;
     private Point location;
     private List<Sell> itemsToSell = new ArrayList<>();
     private int id;
 
+
+    private Double getTotalEarning() {
+
+        return totalEarning;
+    }
+
+    public void addToEarning(Double orderPrice){
+        totalEarning = totalEarning+orderPrice;
+    }
     public static Store createInstanceBySDM(SDMStore sdmStore) {
         Store newStore = new Store();
 
@@ -82,7 +96,9 @@ public class Store {
         }
         return false;
     }
-
+    public HashMap<Integer, Order> getOrders() {
+        return orders;
+    }
     public int getId() {
         return id;
     }

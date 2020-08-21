@@ -144,7 +144,8 @@ public class SystemManager {
                     sell.increaseNumberOfTimesItemWasSold(order.getItemsQuantity().get(item.getId()));
             }
         }
-        superMarket.getOrders().put(orderNumber, order);
+        order.getStoreToOrderFrom().getOrders().put(orderNumber, order);
+        order.getStoreToOrderFrom().addToEarning(order.getItemsPrice());
     }
 
     public void addAnItemToOrder(Order order, int storeId, int itemId, double quantity) {
