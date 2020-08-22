@@ -163,8 +163,8 @@ public class SuperMarketUI {
     private void loadXMLFile() {
         System.out.println("Please enter full path of your XML file.");
         String fullPath = scanner.nextLine();
-        //fullPath = "C:\\Users\\Lior\\IdeaProjects\\ex1-small.xml";
-        fullPath = "/Users/dor.cohen/Downloads/ex1-small.xml";
+        fullPath = "C:\\Users\\Lior\\IdeaProjects\\ex1-small.xml";
+        //fullPath = "/Users/dor.cohen/Downloads/ex1-small.xml";
         systemManager.LoadXMLFileAndCheckIt(fullPath);
         if(systemManager.getXmlUtilities().getIsXmlOk())
             System.out.println("Loadeded successfully");

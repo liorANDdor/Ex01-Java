@@ -1,7 +1,6 @@
 package SDMModel;
 
 import SDMGenerated.SuperDuperMarketDescriptor;
-import com.sun.tools.corba.se.idl.constExpr.Or;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -147,9 +146,9 @@ public class SystemManager {
         }
         for (Map.Entry<Store, List<Sell>> entry : order.getStoresToOrderFrom().entrySet()) {
 
-            //Order specificOrder = Order.crateSubOrder(entry.getKey(), order, );
+            Order subOrder = Order.crateSubOrder(entry.getKey(), order,  superMarket.getItems().values());
 
-            //the section from this comment to the next one can be removed if we implement the above function^
+            /*the section from this comment to the next one can be removed if we implement the above function^
             Order subOrder = new Order();
             subOrder.setDateOfOrder(order.getDateOfOrder());
             subOrder.setOrderNumber(order.getOrderNumber());
@@ -163,7 +162,7 @@ public class SystemManager {
                 subOrder.getItemsQuantity().put(item, order.getItemsQuantity().get(item));
             }
             subOrder.setItemsPrice(itemPrice);
-               //remove|||||
+            //remove*/
 
             entry.getKey().addOrder(orderNumber, subOrder);
         }

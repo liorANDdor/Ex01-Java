@@ -1,15 +1,13 @@
 package SDMModel;
 
-import java.util.List;
+import java.util.*;
 import java.util.List;
 
 import java.awt.*;
-import java.util.Date;
-import java.util.HashMap;
 
 public class Order {
 
-    /*public static Order crateSubOrder(Store store, Order order){
+    public static Order crateSubOrder(Store store, Order order, Collection<Item> items){
         Order subOrder = new Order();
         subOrder.setDateOfOrder(order.getDateOfOrder());
         subOrder.setOrderNumber(order.getOrderNumber());
@@ -18,13 +16,13 @@ public class Order {
         subOrder.calculatAndSetDistance();
         double itemPrice = 0.0;
         for (Sell sell : subOrder.getStoresToOrderFrom().get(store)) {
-            Item item =  setItemByID(sell.getItemId());
+            Item item = items.stream().filter(itemEl->itemEl.getId()==sell.getItemId()).findAny().get();
             itemPrice = itemPrice + sell.getPrice() * order.getItemsQuantity().get(item);
             subOrder.getItemsQuantity().put(item, order.getItemsQuantity().get(item));
         }
         subOrder.setItemsPrice(itemPrice);
         return subOrder;
-    }*/
+    }
 
     public double getItemPrice(Integer itemID) {
         Double itemPrice = 0.0;
