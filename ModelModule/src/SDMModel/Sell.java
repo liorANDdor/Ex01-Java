@@ -25,7 +25,7 @@ public class Sell {
     private double price;
     private int itemId;
     private double numberOfTimesItemWasSold;
-
+    private Item item;
 
     public static Sell createInstanceBySDM(SDMSell sell) {
         Sell newSell= new Sell();

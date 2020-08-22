@@ -176,15 +176,17 @@ public class SuperMarketUI {
 
     private void createOrder() {
         if(systemManager.isXmlLoaded()) {
-
-            System.out.println("Would you like static or dynamic purchase (0 for static for now)");
-            int isStatic = IO.getInt();
-            if(isStatic==0) {
-                createStaticOrder();
-            }
-            else {
-                createDynamicOrder();
-            }
+            String isStatic;
+            System.out.println("Would you like us to shop the items dynamically for you? (Yes/No)");
+            do {
+                isStatic = scanner.nextLine();
+                if (isStatic.equals("Yes"))
+                    createDynamicOrder();
+                else if (isStatic.equals("No"))
+                    createStaticOrder();
+                else
+                    System.out.println("Please choose 'Yes' or 'No' only");
+            }while (!isStatic.equals("Yes") || !isStatic.equals("No"));
         }
         else
             System.out.println("You should load an xml file");

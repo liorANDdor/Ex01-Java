@@ -146,20 +146,26 @@ public class SystemManager {
             item.increaseNumberOfTimesItemWasSold(order.getItemsQuantity().get(item));
         }
         for (Map.Entry<Store, List<Sell>> entry : order.getStoresToOrderFrom().entrySet()) {
-            Order specificOrder = new Order();
-            specificOrder.setDateOfOrder(order.getDateOfOrder());
-            specificOrder.setOrderNumber(order.getOrderNumber());
-            specificOrder.getStoresToOrderFrom().put(entry.getKey(), entry.getValue());
-            specificOrder.setLocationOfClient(order.getLocationOfClient());
-            specificOrder.calculatAndSetDistance();
+
+            //Order specificOrder = Order.crateSubOrder(entry.getKey(), order, );
+
+            //the section from this comment to the next one can be removed if we implement the above function^
+            Order subOrder = new Order();
+            subOrder.setDateOfOrder(order.getDateOfOrder());
+            subOrder.setOrderNumber(order.getOrderNumber());
+            subOrder.getStoresToOrderFrom().put(entry.getKey(), order.getStoresToOrderFrom().get(entry.getKey()));
+            subOrder.setLocationOfClient(order.getLocationOfClient());
+            subOrder.calculatAndSetDistance();
             double itemPrice = 0.0;
-            for (Sell sell : specificOrder.getStoresToOrderFrom().get(entry.getKey())) {
+            for (Sell sell : subOrder.getStoresToOrderFrom().get(entry.getKey())) {
                 Item item = superMarket.getItemByID(sell.getItemId());
                 itemPrice = itemPrice + sell.getPrice() * order.getItemsQuantity().get(item);
-                specificOrder.getItemsQuantity().put(item, order.getItemsQuantity().get(item));
+                subOrder.getItemsQuantity().put(item, order.getItemsQuantity().get(item));
             }
-            specificOrder.setItemsPrice(itemPrice);
-            entry.getKey().addOrder(orderNumber, specificOrder);
+            subOrder.setItemsPrice(itemPrice);
+               //remove|||||
+
+            entry.getKey().addOrder(orderNumber, subOrder);
         }
 
     }
@@ -183,6 +189,7 @@ public class SystemManager {
             }
             order.getItemsQuantity().put(item, quantity);
         }
+        store.getSellById(itemId).increaseNumberOfTimesItemWasSold(quantity);
         double itemPrice = superMarket.getStores().get(store.getId()).getItemPrice(itemId);
         order.increaseOrderTotalPrice(itemPrice * quantity);
     }

@@ -9,6 +9,22 @@ import java.util.HashMap;
 
 public class Order {
 
+    /*public static Order crateSubOrder(Store store, Order order){
+        Order subOrder = new Order();
+        subOrder.setDateOfOrder(order.getDateOfOrder());
+        subOrder.setOrderNumber(order.getOrderNumber());
+        subOrder.getStoresToOrderFrom().put(store, order.getStoresToOrderFrom().get(store));
+        subOrder.setLocationOfClient(order.getLocationOfClient());
+        subOrder.calculatAndSetDistance();
+        double itemPrice = 0.0;
+        for (Sell sell : subOrder.getStoresToOrderFrom().get(store)) {
+            Item item =  setItemByID(sell.getItemId());
+            itemPrice = itemPrice + sell.getPrice() * order.getItemsQuantity().get(item);
+            subOrder.getItemsQuantity().put(item, order.getItemsQuantity().get(item));
+        }
+        subOrder.setItemsPrice(itemPrice);
+        return subOrder;
+    }*/
 
     public double getItemPrice(Integer itemID) {
         Double itemPrice = 0.0;

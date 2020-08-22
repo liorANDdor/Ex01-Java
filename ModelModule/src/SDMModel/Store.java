@@ -62,6 +62,7 @@ public class Store {
         newStore.setLocation(new Point(sdmStore.getLocation().getX(),sdmStore.getLocation().getY()));
         List<SDMSell>itemsToSellSDM = sdmStore.getSDMPrices().getSDMSell();
         for(SDMSell sell : itemsToSellSDM){
+
             Sell newSell= Sell.createInstanceBySDM(sell);
             newStore.getItemsToSell().add(newSell);
         }
