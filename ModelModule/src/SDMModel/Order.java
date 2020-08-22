@@ -1,5 +1,8 @@
 package SDMModel;
 
+import java.util.List;
+import java.util.List;
+
 import java.awt.*;
 import java.util.Date;
 import java.util.HashMap;
@@ -7,8 +10,34 @@ import java.util.HashMap;
 public class Order {
 
 
+    public double getItemPrice(Integer itemID) {
+        Double itemPrice = 0.0;
+        for(List<Sell> sells:storesToOrderFrom.values()){
+            for(Sell sell:sells)
+                if (sell.getItemId() == itemID)
+                    itemPrice = sell.getPrice();
+        }
+        return itemPrice;
+    }
+
+    public void setItemsPrice(double itemPrice) {
+        this.itemsPrice = itemPrice;
+    }
+
+    public void calculatAndSetDistance() {
+        Point clientLocation = getLocationOfClient();
+        double totalShipmentPrice=0.0;
+        for(Store store: getStoresToOrderFrom().keySet()) {
+            Point storeLocation = store.getLocation();
+            double deliveryDistance = Math.sqrt((clientLocation.x - storeLocation.x) * (clientLocation.x - storeLocation.x)
+                    + (clientLocation.y - storeLocation.y) * (clientLocation.y - storeLocation.y));
+             totalShipmentPrice = totalShipmentPrice + deliveryDistance * store.getDeliveryPpk();
+        }
+        shipmentPrice = totalShipmentPrice;
+    }
+
     public enum InfoOptions {
-        OrderId, Date, StoreNameAndId, ItemsPrice, ShipmentPrice, TotalPrice, DeliveryDistance, AmountOfKindsOfItems, AmountOfAllItems;
+        OrderId, Date, ItemsPrice, ShipmentPrice, TotalPrice, DeliveryDistance, AmountOfKindsOfItems, AmountOfAllItems;
 
 
         public String getInfo(Order order) {
@@ -18,8 +47,8 @@ public class Order {
                     return order.getDateOfOrder().toString();
                 case OrderId:
                     return String.valueOf(order.getOrderNumber());
-                case StoreNameAndId:
-                    return order.getStoreToOrderFrom().getName() +", " +String.valueOf(order.getStoreToOrderFrom().getId());
+//                case StoreNameAndId:
+//                    return order.getStoresToOrderFrom().getName() +", " +String.valueOf(order.getStoresToOrderFrom().getId());
                 case ShipmentPrice:
                     return String.valueOf(order.getShipmentPrice());
                 case ItemsPrice:
@@ -38,8 +67,14 @@ public class Order {
         }
     }
 
-    private double getAmountOfAllItems() {
-        return itemsQuantity.values().stream().mapToDouble(i->i).sum();
+    private int getAmountOfAllItems() {
+        double amountOfAllItems = 0.0;
+        for(Item item:itemsQuantity.keySet())
+            if(item.getPurchaseCategory()== Item.PurchaseCategory.WEIGHT)
+                amountOfAllItems++;
+            else
+                amountOfAllItems = amountOfAllItems + itemsQuantity.get(item);
+        return (int)amountOfAllItems;
     }
 
     private int getAmountOfKindsOfItems() {
@@ -47,7 +82,8 @@ public class Order {
     }
 
     private Integer orderNumber;
-    private Store storeToOrderFrom;
+    private Boolean isDynamic = false;
+    private HashMap<Store, List<Sell>> storesToOrderFrom = new HashMap<Store, List<Sell>>();
     //private HashMap<Integer ,Item> itemsToOrder = new  HashMap<Integer ,Item>();
     private Point locationOfClient;
     private HashMap<Item , Double> itemsQuantity = new  HashMap<Item ,Double>();
@@ -61,7 +97,7 @@ public class Order {
     private Double itemsPrice = 0.0;
 
     public double getDeliveryDistance() {
-        return (double)Math.round( deliveryDistance * 1000d) / 1000d;
+        return (double)Math.round( deliveryDistance * 100.0d) / 100.0d;
     }
 
     private double deliveryDistance;
@@ -70,13 +106,13 @@ public class Order {
     }
 
     public Double getItemsPrice() {
-        return itemsPrice;
+        return (double)Math.round(itemsPrice);
     }
 
     private Double shipmentPrice;
 
     public Double getShipmentPrice() {
-        return (shipmentPrice * 1000d) / 1000d;
+        return (double)Math.round((shipmentPrice * 100.0d) / 100.0d);
     }
     public void setShipmentPrice(Double price) {
         shipmentPrice = price;
@@ -85,19 +121,30 @@ public class Order {
     public void setDateOfOrder(Date dateOfOrder) {
         this.dateOfOrder = dateOfOrder;
     }
-    public void setStore(Store store) {
-        storeToOrderFrom = store;
-    }
+
 
     public java.util.Date getDateOfOrder() {
         return dateOfOrder;
     }
 
-//    public HashMap<Integer, Item> getItemsToOrder() {
+    public Boolean getDynamic() {
+        return isDynamic;
+    }
+
+
+    public void setDynamic(Boolean isDynamic) {
+         this.isDynamic = isDynamic;
+    }
+
+
+    //    public HashMap<Integer, Item> getItemsToOrder() {
 //        return itemsToOrder;
 //    }
-    public Store getStoreToOrderFrom() {
-        return storeToOrderFrom;
+    public HashMap<Store, List<Sell>> getStoresToOrderFrom() {
+        return storesToOrderFrom;
+    }
+    public void setStoresToOrderFrom(HashMap<Store, List<Sell>> storesToOrderFrom) {
+        this.storesToOrderFrom=storesToOrderFrom;
     }
 
     public HashMap<Item, Double> getItemsQuantity() {

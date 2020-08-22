@@ -73,10 +73,10 @@ public class SuperMarket {
     }
 
     public HashMap<Integer, Order> getOrders() {
-        HashMap<Integer, Order> allOrdersFromStores = new HashMap<>();
-        for(Store store :stores.values())
-            allOrdersFromStores.putAll(store.getOrders());
+        return orders;
+    }
 
-        return allOrdersFromStores;
+    public void addOrder(Order order) {
+        orders.put(order.getOrderNumber(), order);
     }
 }

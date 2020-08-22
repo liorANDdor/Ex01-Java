@@ -164,7 +164,7 @@ public class SuperMarketUI {
         System.out.println("Please enter full path of your XML file.");
         String fullPath = scanner.nextLine();
         //fullPath = "C:\\Users\\Lior\\IdeaProjects\\ex1-small.xml";
-        fullPath = "/Users/dor.cohen/Downloads/ex1-big.xml";
+        fullPath = "/Users/dor.cohen/Downloads/ex1-small.xml";
         systemManager.LoadXMLFileAndCheckIt(fullPath);
         if(systemManager.getXmlUtilities().getIsXmlOk())
             System.out.println("Loadeded successfully");
@@ -176,7 +176,7 @@ public class SuperMarketUI {
 
     private void createOrder() {
         if(systemManager.isXmlLoaded()) {
-            systemManager.getSuperMarket().getStores().forEach((id, store) -> printStore(store));
+
             System.out.println("Would you like static or dynamic purchase (0 for static for now)");
             int isStatic = IO.getInt();
             if(isStatic==0) {
@@ -193,6 +193,7 @@ public class SuperMarketUI {
     private void createDynamicOrder() {
 
         Order emptyOrder = systemManager.getEmptyOrder();
+        emptyOrder.setDynamic(true);
         System.out.println("Please enter delivery date (dd/mm-hh:mm format)");
         verifyAndSetDate(emptyOrder);
         System.out.println("Please enter a location");
@@ -221,7 +222,7 @@ public class SuperMarketUI {
             else
                 quantity = IO.getDouble();
             Store storeLowestItemPrice = systemManager.getItemLowestPrice(itemId);
-            systemManager.addAnItemToOrder(emptyOrder, storeLowestItemPrice.getId(), itemId, quantity);
+            systemManager.addAnItemToOrder(emptyOrder, storeLowestItemPrice, itemId, quantity);
             System.out.println("Item was added to order");
             System.out.println("Press Q if you dont want another item, or any key to continue");
             String userWantToContinue = scanner.nextLine();
@@ -232,8 +233,9 @@ public class SuperMarketUI {
         getOrderInfo(emptyOrder);
         System.out.println("Press Y if you to commit the order");
         String userWantToCommit = scanner.nextLine();
-        if (userWantToCommit.equals("y") || userWantToCommit.equals("Y"))
+        if (userWantToCommit.equals("y") || userWantToCommit.equals("Y")) {
             systemManager.commitOrder(emptyOrder);
+        }
     }
 
 
@@ -241,6 +243,7 @@ public class SuperMarketUI {
 
     private void createStaticOrder() {
         Order emptyOrder = systemManager.getEmptyOrder();
+        systemManager.getSuperMarket().getStores().forEach((id, store) -> printStore(store));
         System.out.println("Please Choose a store (by ID)");
         int storeID = IO.getInt();
         while (!systemManager.isValidStoreId(storeID)) {
@@ -275,7 +278,8 @@ public class SuperMarketUI {
                     quantity = IO.getInt();
                 else
                     quantity = IO.getDouble();
-                systemManager.addAnItemToOrder(emptyOrder, storeID, itemId, quantity);
+                Store storeToBuyFrom = systemManager.getSuperMarket().getStores().get(storeID);
+                systemManager.addAnItemToOrder(emptyOrder,storeToBuyFrom , itemId, quantity);
                 System.out.println("Item was added to order");
             } else
                 System.out.println("this item is not an option");
@@ -345,19 +349,25 @@ public class SuperMarketUI {
         for (Item item: order.getItemsQuantity().keySet()){
             itemID = item.getId();
             System.out.print(systemManager.getinfoItem(item, itemAttributes));
-            itemPrice = order.getStoreToOrderFrom().getItemPrice(itemID);
+            itemPrice = order.getItemPrice(itemID);
             itemQuantity = order.getItemsQuantity().get(item);
             System.out.println("Item price: " + itemPrice);
             System.out.println("Item quantity: " + itemQuantity);
             System.out.println("Item total price: " + String.valueOf(((itemPrice * itemQuantity)* 1000d) / 1000d) +"\n");
         }
-        printDistanceAndPPK(order);
+        for(Store store: order.getStoresToOrderFrom().keySet())
+            printDistanceAndPPK(store, order);
     }
 
-    private void printDistanceAndPPK(Order order) {
-        systemManager.calculateDistance(order);
-        System.out.println("\n\nDistance from store: " + order.getDeliveryDistance());
-        System.out.println("PPK of store: " + order.getStoreToOrderFrom().getDeliveryPpk());
+
+    private void printDistanceAndPPK(Store store, Order order) {
+        Point clientLocation = order.getLocationOfClient();
+        Point storeLocation = store.getLocation();
+        order.setDeliveryDistance(Math.sqrt((clientLocation.x - storeLocation.x) *(clientLocation.x - storeLocation.x)
+                + (clientLocation.y - storeLocation.y) *(clientLocation.y - storeLocation.y)));
+        order.setShipmentPrice(order.getDeliveryDistance() * store.getDeliveryPpk());
+        System.out.println("\n\nDistance from " + String.valueOf(store.getName()) + " store: " + order.getDeliveryDistance());
+        System.out.println("PPK of store: " + store.getDeliveryPpk());
         System.out.println("Shipment total price: " + (double)Math.round(  order.getShipmentPrice() * 1000d) / 1000d);
 
     }
@@ -373,7 +383,7 @@ public class SuperMarketUI {
                 List<Order.InfoOptions> list = new ArrayList<>();
                 list.add(Order.InfoOptions.OrderId);
                 list.add(Order.InfoOptions.Date);
-                list.add(Order.InfoOptions.StoreNameAndId);
+                //list.add(Order.InfoOptions.StoreNameAndId);
                 list.add(Order.InfoOptions.AmountOfKindsOfItems);
                 list.add(Order.InfoOptions.AmountOfAllItems);
                 list.add(Order.InfoOptions.ItemsPrice);

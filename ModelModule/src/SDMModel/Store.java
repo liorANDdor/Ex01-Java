@@ -12,6 +12,9 @@ import java.util.List;
 
 public class Store {
 
+
+
+
     public enum InfoOptions {
         Name, ID, Location, DeliveryPPK, TotalEarning;
 
@@ -81,6 +84,15 @@ public class Store {
         this.location = location;
     }
 
+    public Sell getSellById(int itemId) {
+        Sell sellById = null;
+        for (Sell sell:itemsToSell){
+            if (sell.getItemId() == itemId)
+                sellById = sell;
+        }
+        return sellById;
+    }
+
     public List<Sell> getItemsToSell() {
         return itemsToSell;
     }
@@ -101,6 +113,13 @@ public class Store {
     }
     public int getId() {
         return id;
+    }
+
+    public void addOrder(Integer orderNumber, Order order) {
+        HashMap<Store, List<Sell>> storesOrderedFrom= new HashMap<>();
+        storesOrderedFrom.put(this, order.getStoresToOrderFrom().get(this));
+        order.setStoresToOrderFrom(storesOrderedFrom);
+        getOrders().put(orderNumber, order);
     }
 
     public void setId(int id) {
@@ -133,5 +152,5 @@ public class Store {
         return 0; //TODO:ERROR raise
     }
 
-    
+
 }
