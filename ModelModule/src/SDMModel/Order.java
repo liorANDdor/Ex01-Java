@@ -43,14 +43,14 @@ public class Order {
     }
 
     private int getAmountOfKindsOfItems() {
-        return itemsToOrder.keySet().size();
+        return itemsQuantity.keySet().size();
     }
 
     private Integer orderNumber;
     private Store storeToOrderFrom;
-    private HashMap<Integer ,Item> itemsToOrder = new  HashMap<Integer ,Item>();
+    //private HashMap<Integer ,Item> itemsToOrder = new  HashMap<Integer ,Item>();
     private Point locationOfClient;
-    private HashMap<Integer , Double> itemsQuantity = new  HashMap<Integer ,Double>();
+    private HashMap<Item , Double> itemsQuantity = new  HashMap<Item ,Double>();
     private Date dateOfOrder;
     private Double totalPrice;
 
@@ -93,14 +93,14 @@ public class Order {
         return dateOfOrder;
     }
 
-    public HashMap<Integer, Item> getItemsToOrder() {
-        return itemsToOrder;
-    }
+//    public HashMap<Integer, Item> getItemsToOrder() {
+//        return itemsToOrder;
+//    }
     public Store getStoreToOrderFrom() {
         return storeToOrderFrom;
     }
 
-    public HashMap<Integer, Double> getItemsQuantity() {
+    public HashMap<Item, Double> getItemsQuantity() {
         return itemsQuantity;
     }
 

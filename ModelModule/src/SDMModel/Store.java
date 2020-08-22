@@ -86,7 +86,7 @@ public class Store {
     }
 
     public void setItemsToSell(List<Sell> itemsToSell) {
-        itemsToSell = itemsToSell;
+        this.itemsToSell = itemsToSell;
     }
 
     public boolean isItemSold(int itemId){

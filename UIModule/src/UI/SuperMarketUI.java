@@ -176,67 +176,125 @@ public class SuperMarketUI {
 
     private void createOrder() {
         if(systemManager.isXmlLoaded()) {
-            Order emptyOrder = systemManager.getEmptyOrder();
             systemManager.getSuperMarket().getStores().forEach((id, store) -> printStore(store));
-            System.out.println("Please Choose a store (by ID)");
-            int storeID = IO.getInt();
-            while (!systemManager.isValidStoreId(storeID)) {
-                System.out.println("Unknown ID, try again (by ID)");
-                storeID = IO.getInt();
+            System.out.println("Would you like static or dynamic purchase (0 for static for now)");
+            int isStatic = IO.getInt();
+            if(isStatic==0) {
+                createStaticOrder();
             }
-            systemManager.setStoreOfOrderByID(storeID, emptyOrder);
-            System.out.println("Please enter delivery date (dd/mm-hh:mm format)");
-            verifyAndSetDate(emptyOrder);
-            System.out.println("Please enter a location");
-            verifyAndSetLocation(emptyOrder);
-
-            int finalStoreID = storeID;
-            systemManager.getSuperMarket().getItems().forEach((id, item) -> {
-                printItemIDNamePPK(item);
-                String itemPrice = systemManager.getPriceOfItemByStoreId(item, finalStoreID);
-                System.out.println("Item price: " + itemPrice + "\n");
-            });
-            boolean isContinue = true;
-            while (isContinue) {
-                isContinue = getItemsFromCustomer(emptyOrder, storeID);
-
+            else {
+                createDynamicOrder();
             }
-            getOrderInfo(emptyOrder);
-            System.out.println("Press Y if you to commit the order");
-            String userWantToCommit = scanner.nextLine();
-            if (userWantToCommit.equals("y") || userWantToCommit.equals("Y"))
-                systemManager.commitOrder(emptyOrder);
         }
         else
             System.out.println("You should load an xml file");
     }
 
-    private Boolean getItemsFromCustomer(Order order, Integer storeID){
-        System.out.println("Please choose item by put ID");
-        int itemId = IO.getInt();
-        while (!systemManager.isValidItemId(itemId)) {
-            System.out.println("Unknown item ID, try again (by ID)");
-            itemId = IO.getInt();
-        }
-        Item.PurchaseCategory category = systemManager.getPurchaseCategory(itemId);
+    private void createDynamicOrder() {
 
-        double quantity;
-        if (systemManager.checkIfStoreSellAnItem(storeID, itemId)) {
+        Order emptyOrder = systemManager.getEmptyOrder();
+        System.out.println("Please enter delivery date (dd/mm-hh:mm format)");
+        verifyAndSetDate(emptyOrder);
+        System.out.println("Please enter a location");
+        verifyAndSetLocation(emptyOrder);
+
+
+        systemManager.getSuperMarket().getItems().forEach((id, item) -> {
+            printItemIDNamePPK(item);
+            Store storeLowestItemPrice = systemManager.getItemLowestPrice(item.getId());
+            System.out.println("Item price: " + storeLowestItemPrice.getItemPrice(item.getId()) + "\n");
+        });
+        boolean isContinue = true;
+        while (isContinue) {
+            System.out.println("Please choose item by putting its ID");
+            int itemId = IO.getInt();
+            while (!systemManager.isValidItemId(itemId)) {
+                System.out.println("Unknown item ID, try again (by ID)");
+                itemId = IO.getInt();
+            }
+            Item.PurchaseCategory category = systemManager.getPurchaseCategory(itemId);
+            double quantity;
+
             System.out.println("Please Enter QUANTITY (" + category + ")");
             if (category.equals(Item.PurchaseCategory.QUANTITY))
                 quantity = IO.getInt();
             else
                 quantity = IO.getDouble();
-            systemManager.addAnItemToOrder(order, storeID, itemId, quantity);
+            Store storeLowestItemPrice = systemManager.getItemLowestPrice(itemId);
+            systemManager.addAnItemToOrder(emptyOrder, storeLowestItemPrice.getId(), itemId, quantity);
             System.out.println("Item was added to order");
-        } else
-            System.out.println("this item is not an option");
-        System.out.println("Press Q if you dont want another item, or any key to continue");
-        String userWantToContinue = scanner.nextLine();
-        if (userWantToContinue.equals("q") || userWantToContinue.equals("Q"))
-            return false;
-        return true;
+            System.out.println("Press Q if you dont want another item, or any key to continue");
+            String userWantToContinue = scanner.nextLine();
+            if (userWantToContinue.equals("q") || userWantToContinue.equals("Q"))
+                isContinue = false;
+
+        }
+        getOrderInfo(emptyOrder);
+        System.out.println("Press Y if you to commit the order");
+        String userWantToCommit = scanner.nextLine();
+        if (userWantToCommit.equals("y") || userWantToCommit.equals("Y"))
+            systemManager.commitOrder(emptyOrder);
     }
+
+
+
+
+    private void createStaticOrder() {
+        Order emptyOrder = systemManager.getEmptyOrder();
+        System.out.println("Please Choose a store (by ID)");
+        int storeID = IO.getInt();
+        while (!systemManager.isValidStoreId(storeID)) {
+            System.out.println("Unknown ID, try again (by ID)");
+            storeID = IO.getInt();
+        }
+        systemManager.setStoreOfOrderByID(storeID, emptyOrder);
+        System.out.println("Please enter delivery date (dd/mm-hh:mm format)");
+        verifyAndSetDate(emptyOrder);
+        System.out.println("Please enter a location");
+        verifyAndSetLocation(emptyOrder);
+
+        int finalStoreID = storeID;
+        systemManager.getSuperMarket().getItems().forEach((id, item) -> {
+            printItemIDNamePPK(item);
+            String itemPrice = systemManager.getPriceOfItemByStoreId(item, finalStoreID);
+            System.out.println("Item price: " + itemPrice + "\n");
+        });
+        boolean isContinue = true;
+        while (isContinue) {
+            System.out.println("Please choose item by putting its ID");
+            int itemId = IO.getInt();
+            while (!systemManager.isValidItemId(itemId)) {
+                System.out.println("Unknown item ID, try again (by ID)");
+                itemId = IO.getInt();
+            }
+            Item.PurchaseCategory category = systemManager.getPurchaseCategory(itemId);
+            double quantity;
+            if (systemManager.checkIfStoreSellAnItem(storeID, itemId)) {
+                System.out.println("Please Enter QUANTITY (" + category + ")");
+                if (category.equals(Item.PurchaseCategory.QUANTITY))
+                    quantity = IO.getInt();
+                else
+                    quantity = IO.getDouble();
+                systemManager.addAnItemToOrder(emptyOrder, storeID, itemId, quantity);
+                System.out.println("Item was added to order");
+            } else
+                System.out.println("this item is not an option");
+
+            System.out.println("Press Q if you dont want another item, or any key to continue");
+            String userWantToContinue = scanner.nextLine();
+            if (userWantToContinue.equals("q") || userWantToContinue.equals("Q"))
+                isContinue = false;
+
+        }
+        getOrderInfo(emptyOrder);
+        System.out.println("Press Y if you to commit the order");
+        String userWantToCommit = scanner.nextLine();
+        if (userWantToCommit.equals("y") || userWantToCommit.equals("Y"))
+            systemManager.commitOrder(emptyOrder);
+    }
+
+
+
     private void verifyAndSetLocation(Order order) {
 
         boolean isfixedLocation = false;
@@ -284,11 +342,11 @@ public class SuperMarketUI {
         Integer itemID;
         double itemQuantity;
         double itemPrice;
-        for (Item item: order.getItemsToOrder().values()){
+        for (Item item: order.getItemsQuantity().keySet()){
             itemID = item.getId();
             System.out.print(systemManager.getinfoItem(item, itemAttributes));
             itemPrice = order.getStoreToOrderFrom().getItemPrice(itemID);
-            itemQuantity = order.getItemsQuantity().get(itemID);
+            itemQuantity = order.getItemsQuantity().get(item);
             System.out.println("Item price: " + itemPrice);
             System.out.println("Item quantity: " + itemQuantity);
             System.out.println("Item total price: " + String.valueOf(((itemPrice * itemQuantity)* 1000d) / 1000d) +"\n");

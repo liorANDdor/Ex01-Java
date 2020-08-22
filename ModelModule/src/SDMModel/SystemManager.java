@@ -1,9 +1,11 @@
 package SDMModel;
 
+import SDMGenerated.SDMItem;
 import SDMGenerated.SuperDuperMarketDescriptor;
 
 import java.awt.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class SystemManager {
 
@@ -137,11 +139,11 @@ public class SystemManager {
         Integer  orderNumber = superMarket.getNumberOfOrders() + 1;
         superMarket.increaseOrderNumber();
         order.setOrderNumber(orderNumber);
-        for(Item item: order.getItemsToOrder().values()){
-            item.increaseNumberOfTimesItemWasSold(order.getItemsQuantity().get(item.getId()));
+        for(Item item: order.getItemsQuantity().keySet()){
+            item.increaseNumberOfTimesItemWasSold(order.getItemsQuantity().get(item));
             for(Sell sell:order.getStoreToOrderFrom().getItemsToSell()){
                 if (sell.getItemId() == item.getId())
-                    sell.increaseNumberOfTimesItemWasSold(order.getItemsQuantity().get(item.getId()));
+                    sell.increaseNumberOfTimesItemWasSold(order.getItemsQuantity().get(item));
             }
         }
         order.getStoreToOrderFrom().getOrders().put(orderNumber, order);
@@ -149,12 +151,12 @@ public class SystemManager {
     }
 
     public void addAnItemToOrder(Order order, int storeId, int itemId, double quantity) {
-       if  (order.getItemsToOrder().containsKey(itemId)){
-           order.getItemsQuantity().put(itemId, (order.getItemsQuantity().get(itemId) + quantity));
+        Item item = superMarket.getItemByID(itemId);
+       if  (order.getItemsQuantity().containsKey(item)){
+           order.getItemsQuantity().put(item, (order.getItemsQuantity().get(item) + quantity));
         }
         else {
-           order.getItemsToOrder().put(itemId, superMarket.getItemByID(itemId));
-           order.getItemsQuantity().put(itemId, quantity);
+           order.getItemsQuantity().put(item, quantity);
        }
         double itemPrice = superMarket.getStores().get(storeId).getItemPrice(itemId);
         order.increaseOrderTotalPrice(itemPrice * quantity);
@@ -186,4 +188,18 @@ public class SystemManager {
                 .stream()
                 .anyMatch(store -> store.getLocation().equals(point));
     }
+
+    public Store getItemLowestPrice(Integer itemId) {
+        Double itemLowstPrice = Double.POSITIVE_INFINITY;
+        Store storeLowestItemPrice = null;
+        for(Store store:superMarket.getStores().values()){
+            if(store.isItemSold(itemId))
+                if(store.getItemPrice(itemId)<itemLowstPrice) {
+                    itemLowstPrice = store.getItemPrice(itemId);
+                    storeLowestItemPrice = store;
+                }
+        }
+        return storeLowestItemPrice;
+    }
+
 }
