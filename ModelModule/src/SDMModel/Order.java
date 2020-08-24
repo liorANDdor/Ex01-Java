@@ -57,6 +57,7 @@ public class Order {
             subOrder.getItemsQuantity().put(item, order.getItemsQuantity().get(item));
         }
         subOrder.setItemsPrice(itemPrice);
+        store.addToTotalEarning(itemPrice + subOrder.getShipmentPrice());
         return subOrder;
     }
 

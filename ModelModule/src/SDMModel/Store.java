@@ -40,9 +40,13 @@ public class Store {
     private List<Sell> itemsToSell = new ArrayList<>();
     private int id;
 
-    private Double getTotalEarning() {
+    public Double getTotalEarning() {
 
         return totalEarning;
+    }
+    public void addToTotalEarning(double earning) {
+
+         totalEarning = totalEarning +earning;
     }
 
     public static Store createInstanceBySDM(SDMStore sdmStore) {
