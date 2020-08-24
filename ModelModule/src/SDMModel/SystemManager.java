@@ -76,7 +76,7 @@ public class SystemManager {
         StringBuilder storeInfo = new StringBuilder();
         for (Store.InfoOptions option : list) {
             storeInfo
-                    .append(option.toString())
+                    .append(String.join(" ", option.toString().split("(?=[A-Z])")))
                     .append(": ").append(option.getInfo(store))
                     .append("\n");
         }
@@ -145,31 +145,9 @@ public class SystemManager {
             item.increaseNumberOfTimesItemWasSold(order.getItemsQuantity().get(item));
         }
         for (Map.Entry<Store, List<Sell>> entry : order.getStoresToOrderFrom().entrySet()) {
-
             Order subOrder = Order.crateSubOrder(entry.getKey(), order,  superMarket.getItems().values());
-
-            /*the section from this comment to the next one can be removed if we implement the above function^
-            Order subOrder = new Order();
-            subOrder.setDateOfOrder(order.getDateOfOrder());
-            subOrder.setOrderNumber(order.getOrderNumber());
-            subOrder.getStoresToOrderFrom().put(entry.getKey(), order.getStoresToOrderFrom().get(entry.getKey()));
-            subOrder.setLocationOfClient(order.getLocationOfClient());
-            subOrder.calculatAndSetDistance();
-            double itemPrice = 0.0;
-            for (Sell sell : subOrder.getStoresToOrderFrom().get(entry.getKey())) {
-                Item item = superMarket.getItemByID(sell.getItemId());
-                itemPrice = itemPrice + sell.getPrice() * order.getItemsQuantity().get(item);
-                subOrder.getItemsQuantity().put(item, order.getItemsQuantity().get(item));
-            }
-            subOrder.setItemsPrice(itemPrice);
-            //remove*/
-
             entry.getKey().addOrder(orderNumber, subOrder);
         }
-
-    }
-
-    public void calculatAndSetDistance(Store store, Order order){
 
     }
 
@@ -192,10 +170,6 @@ public class SystemManager {
         double itemPrice = superMarket.getStores().get(store.getId()).getItemPrice(itemId);
         order.increaseOrderTotalPrice(itemPrice * quantity);
     }
-
-
-
-
 
     public void isfixedLocationAndSetToOrder(Point point, Order emptyOrder) throws Exception {
         if(point.x>50||point.x<1||point.y>50||point.y<1)

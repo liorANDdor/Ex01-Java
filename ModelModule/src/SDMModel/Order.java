@@ -7,6 +7,42 @@ import java.awt.*;
 
 public class Order {
 
+    public enum InfoOptions {
+        OrderId, Date, ItemsPrice, ShipmentPrice, TotalPrice, DeliveryDistance, AmountOfKindsOfItems, AmountOfAllItems;
+        public String getInfo(Order order) {
+
+            switch (this) {
+                case Date:
+                    return order.getDateOfOrder().toString();
+                case OrderId:
+                    return String.valueOf(order.getOrderNumber());
+                case ShipmentPrice:
+                    return String.valueOf(order.getShipmentPrice());
+                case ItemsPrice:
+                    return String.valueOf(order.getItemsPrice());
+                case TotalPrice:
+                    return String.valueOf((order.getItemsPrice() + order.getShipmentPrice()));
+                case DeliveryDistance:
+                    return String.valueOf(order.getDeliveryDistance());
+                case AmountOfKindsOfItems:
+                    return String.valueOf(order.getAmountOfKindsOfItems());
+                case AmountOfAllItems:
+                    return String.valueOf(order.getAmountOfAllItems());
+                default:
+                    return "Unknown";
+            }
+        }
+    }
+
+    private Integer orderNumber;
+    private HashMap<Store, List<Sell>> storesToOrderFrom = new HashMap<Store, List<Sell>>();
+    private Point locationOfClient;
+    private HashMap<Item , Double> itemsQuantity = new  HashMap<Item ,Double>();
+    private Date dateOfOrder;
+    private Double itemsPrice = 0.0;
+    private double deliveryDistance;
+    private Double shipmentPrice;
+
     public static Order crateSubOrder(Store store, Order order, Collection<Item> items){
         Order subOrder = new Order();
         subOrder.setDateOfOrder(order.getDateOfOrder());
@@ -45,40 +81,9 @@ public class Order {
             Point storeLocation = store.getLocation();
             double deliveryDistance = Math.sqrt((clientLocation.x - storeLocation.x) * (clientLocation.x - storeLocation.x)
                     + (clientLocation.y - storeLocation.y) * (clientLocation.y - storeLocation.y));
-             totalShipmentPrice = totalShipmentPrice + deliveryDistance * store.getDeliveryPpk();
+            totalShipmentPrice = totalShipmentPrice + deliveryDistance * store.getDeliveryPpk();
         }
         shipmentPrice = totalShipmentPrice;
-    }
-
-    public enum InfoOptions {
-        OrderId, Date, ItemsPrice, ShipmentPrice, TotalPrice, DeliveryDistance, AmountOfKindsOfItems, AmountOfAllItems;
-
-
-        public String getInfo(Order order) {
-
-            switch (this) {
-                case Date:
-                    return order.getDateOfOrder().toString();
-                case OrderId:
-                    return String.valueOf(order.getOrderNumber());
-//                case StoreNameAndId:
-//                    return order.getStoresToOrderFrom().getName() +", " +String.valueOf(order.getStoresToOrderFrom().getId());
-                case ShipmentPrice:
-                    return String.valueOf(order.getShipmentPrice());
-                case ItemsPrice:
-                    return String.valueOf(order.getItemsPrice());
-                case TotalPrice:
-                    return String.valueOf((order.getItemsPrice() + order.getShipmentPrice()));
-                case DeliveryDistance:
-                    return String.valueOf(order.getDeliveryDistance());
-                case AmountOfKindsOfItems:
-                    return String.valueOf(order.getAmountOfKindsOfItems());
-                case AmountOfAllItems:
-                    return String.valueOf(order.getAmountOfAllItems());
-                default:
-                    return "Unknown";
-            }
-        }
     }
 
     private int getAmountOfAllItems() {
@@ -95,26 +100,14 @@ public class Order {
         return itemsQuantity.keySet().size();
     }
 
-    private Integer orderNumber;
-    private Boolean isDynamic = false;
-    private HashMap<Store, List<Sell>> storesToOrderFrom = new HashMap<Store, List<Sell>>();
-    //private HashMap<Integer ,Item> itemsToOrder = new  HashMap<Integer ,Item>();
-    private Point locationOfClient;
-    private HashMap<Item , Double> itemsQuantity = new  HashMap<Item ,Double>();
-    private Date dateOfOrder;
-    private Double totalPrice;
-
     public void setDeliveryDistance(double deliveryDistance) {
         this.deliveryDistance = deliveryDistance;
     }
-
-    private Double itemsPrice = 0.0;
 
     public double getDeliveryDistance() {
         return (double)Math.round( deliveryDistance * 100.0d) / 100.0d;
     }
 
-    private double deliveryDistance;
     public void increaseOrderTotalPrice(double itemPrice) {
         this.itemsPrice=this.itemsPrice+itemPrice;
     }
@@ -123,11 +116,10 @@ public class Order {
         return (double)Math.round(itemsPrice);
     }
 
-    private Double shipmentPrice;
-
     public Double getShipmentPrice() {
         return (double)Math.round((shipmentPrice * 100.0d) / 100.0d);
     }
+
     public void setShipmentPrice(Double price) {
         shipmentPrice = price;
     }
@@ -136,27 +128,14 @@ public class Order {
         this.dateOfOrder = dateOfOrder;
     }
 
-
     public java.util.Date getDateOfOrder() {
         return dateOfOrder;
     }
 
-    public Boolean getDynamic() {
-        return isDynamic;
-    }
-
-
-    public void setDynamic(Boolean isDynamic) {
-         this.isDynamic = isDynamic;
-    }
-
-
-    //    public HashMap<Integer, Item> getItemsToOrder() {
-//        return itemsToOrder;
-//    }
     public HashMap<Store, List<Sell>> getStoresToOrderFrom() {
         return storesToOrderFrom;
     }
+
     public void setStoresToOrderFrom(HashMap<Store, List<Sell>> storesToOrderFrom) {
         this.storesToOrderFrom=storesToOrderFrom;
     }
@@ -180,6 +159,5 @@ public class Order {
     public Integer getOrderNumber() {
         return orderNumber;
     }
-
 
 }

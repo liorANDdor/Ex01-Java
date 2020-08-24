@@ -10,10 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 
 public class SuperMarket {
+
     private Integer numberOfOrders = 0;
-
-
-
     private HashMap<Integer, Store> stores = new  HashMap<Integer ,Store>();
     private HashMap<Integer ,Item> items = new  HashMap<Integer ,Item>();
     private HashMap<Integer, Order> orders = new  HashMap<Integer ,Order>();
@@ -27,10 +25,6 @@ public class SuperMarket {
 
     public HashMap<Integer, Item> getItems() {
         return items;
-    }
-
-    public void setItems(HashMap<Integer, Item> items) {
-        this.items = items;
     }
 
     public static SuperMarket creatInstance(SuperDuperMarketDescriptor superMarketSDM) {
@@ -62,7 +56,6 @@ public class SuperMarket {
         Item item = items.get(itemId);
         return item;
     }
-
 
     public Integer getNumberOfOrders() {
         return numberOfOrders;

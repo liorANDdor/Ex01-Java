@@ -1,6 +1,5 @@
 package SDMModel;
 
-import SDMGenerated.Location;
 import SDMGenerated.SDMSell;
 import SDMGenerated.SDMStore;
 
@@ -12,21 +11,18 @@ import java.util.List;
 
 public class Store {
 
-
-
-
     public enum InfoOptions {
-        Name, ID, Location, DeliveryPPK, TotalEarning;
+        Name, Id, Location, DeliveryPpk, TotalEarning;
 
         public String getInfo(Store store) {
             switch (this) {
                 case Name:
                     return store.getName();
-                case ID:
+                case Id:
                     return String.valueOf(store.getId());
                 case Location:
                     return String.valueOf(store.getLocation());
-                case DeliveryPPK:
+                case DeliveryPpk:
                     return String.valueOf(store.getDeliveryPpk());
                 case TotalEarning:
                     return String.valueOf(store.getTotalEarning());
@@ -44,15 +40,11 @@ public class Store {
     private List<Sell> itemsToSell = new ArrayList<>();
     private int id;
 
-
     private Double getTotalEarning() {
 
         return totalEarning;
     }
 
-    public void addToEarning(Double orderPrice){
-        totalEarning = totalEarning+orderPrice;
-    }
     public static Store createInstanceBySDM(SDMStore sdmStore) {
         Store newStore = new Store();
 
@@ -98,10 +90,6 @@ public class Store {
         return itemsToSell;
     }
 
-    public void setItemsToSell(List<Sell> itemsToSell) {
-        this.itemsToSell = itemsToSell;
-    }
-
     public boolean isItemSold(int itemId){
         for (Sell sell:itemsToSell){
             if (sell.getItemId()==itemId)
@@ -109,9 +97,11 @@ public class Store {
         }
         return false;
     }
+
     public HashMap<Integer, Order> getOrders() {
         return orders;
     }
+
     public int getId() {
         return id;
     }
@@ -133,15 +123,6 @@ public class Store {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public double getNumberOfTimesItemWasSold(int itemId) {
-        for(Sell sell:itemsToSell){
-            if(sell.getItemId() == itemId){
-                return sell.getNumberOfTimesItemWasSold();
-            }
-        }
-        return 0; // item wasn't find by ID
     }
 
     public double getItemPrice(int itemId) {

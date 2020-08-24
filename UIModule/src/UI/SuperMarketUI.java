@@ -72,7 +72,6 @@ public class SuperMarketUI {
 
     }
 
-
     private void showStores() {
         if(systemManager.isXmlLoaded()){
             HashMap<Integer, Store> stores = systemManager.getSuperMarket().getStores();
@@ -121,9 +120,9 @@ public class SuperMarketUI {
 
     private void printStore(Store store) {
         List<Store.InfoOptions>list=new LinkedList<>();
-        list.add(Store.InfoOptions.ID);
+        list.add(Store.InfoOptions.Id);
         list.add(Store.InfoOptions.Name);
-        list.add(Store.InfoOptions.DeliveryPPK);
+        list.add(Store.InfoOptions.DeliveryPpk);
         list.add(Store.InfoOptions.TotalEarning);
         System.out.println(systemManager.getStoreInfo(store,list));
     }
@@ -163,8 +162,6 @@ public class SuperMarketUI {
     private void loadXMLFile() {
         System.out.println("Please enter full path of your XML file.");
         String fullPath = scanner.nextLine();
-        fullPath = "C:\\Users\\Lior\\IdeaProjects\\ex1-small.xml";
-        //fullPath = "/Users/dor.cohen/Downloads/ex1-small.xml";
         systemManager.LoadXMLFileAndCheckIt(fullPath);
         if(systemManager.getXmlUtilities().getIsXmlOk())
             System.out.println("Loadeded successfully");
@@ -186,7 +183,7 @@ public class SuperMarketUI {
                     createStaticOrder();
                 else
                     System.out.println("Please choose 'Yes' or 'No' only");
-            }while (!isStatic.equals("Yes") || !isStatic.equals("No"));
+            }while (!isStatic.equals("Yes") && !isStatic.equals("No"));
         }
         else
             System.out.println("You should load an xml file");
@@ -195,7 +192,6 @@ public class SuperMarketUI {
     private void createDynamicOrder() {
 
         Order emptyOrder = systemManager.getEmptyOrder();
-        emptyOrder.setDynamic(true);
         System.out.println("Please enter delivery date (dd/mm-hh:mm format)");
         verifyAndSetDate(emptyOrder);
         System.out.println("Please enter a location");
@@ -239,9 +235,6 @@ public class SuperMarketUI {
             systemManager.commitOrder(emptyOrder);
         }
     }
-
-
-
 
     private void createStaticOrder() {
         Order emptyOrder = systemManager.getEmptyOrder();
@@ -299,8 +292,6 @@ public class SuperMarketUI {
             systemManager.commitOrder(emptyOrder);
     }
 
-
-
     private void verifyAndSetLocation(Order order) {
 
         boolean isfixedLocation = false;
@@ -319,6 +310,7 @@ public class SuperMarketUI {
         } while (!isfixedLocation);
 
     }
+
     private void verifyAndSetDate(Order order) {
         boolean fixdate = false;
         while (fixdate == false) {
@@ -361,7 +353,6 @@ public class SuperMarketUI {
             printDistanceAndPPK(store, order);
     }
 
-
     private void printDistanceAndPPK(Store store, Order order) {
         Point clientLocation = order.getLocationOfClient();
         Point storeLocation = store.getLocation();
@@ -373,8 +364,6 @@ public class SuperMarketUI {
         System.out.println("Shipment total price: " + (double)Math.round(  order.getShipmentPrice() * 1000d) / 1000d);
 
     }
-
-
 
     private void showHistory() {
         if(systemManager.isXmlLoaded()){
@@ -401,8 +390,6 @@ public class SuperMarketUI {
             System.out.println("You should load an xml file");
 
     }
-
-
 
 }
 

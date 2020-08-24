@@ -47,8 +47,6 @@ public class Item {
     private PurchaseCategory purchaseCategory; //can be enum
     private int id;
 
-
-
     public static Item createInstanceBySDM(SDMItem sdmItem, List<Store> stores) {
         Item newItem = new Item();
         newItem.setId(sdmItem.getId());
@@ -97,6 +95,7 @@ public class Item {
     }
 
     public List<Store> getStoresWhoSellTheItem(){ return storesWhoSellTheItem; }
+
     public void setStoresWhoSellTheItem(List<Store> stores){ storesWhoSellTheItem=stores; }
 
     public  double getNumberOfTimesItemWasSold() {
@@ -106,7 +105,5 @@ public class Item {
     public  void increaseNumberOfTimesItemWasSold(double quantity) {
         totalNumberOfTimePurchased +=quantity;
     }
-
-
 
 }
