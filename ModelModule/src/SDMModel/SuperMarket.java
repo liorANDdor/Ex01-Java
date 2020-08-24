@@ -62,7 +62,7 @@ public class SuperMarket {
     }
 
     public void increaseOrderNumber() {
-        this.numberOfOrders=+1;
+        this.numberOfOrders+=1;
     }
 
     public HashMap<Integer, Order> getOrders() {
