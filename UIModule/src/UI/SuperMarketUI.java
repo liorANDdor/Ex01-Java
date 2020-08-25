@@ -64,7 +64,7 @@ public class SuperMarketUI {
                     break;
                 case ShowHistory:
                     showHistory();
-                    System.out.println("history");
+
                     break;
 
             }
@@ -100,10 +100,11 @@ public class SuperMarketUI {
 
     private void printStoreAndSells(Store store) {
         printStore(store);
-        System.out.println("Store Items: ");
+        System.out.println("Store Items: \n");
         for(Sell sell:store.getItemsToSell()) {
             printSellOffer(sell);
         }
+        System.out.println("Store Orders: \n");
         for(Order order:store.getOrders().values()) {
             List<Order.InfoOptions> list = new ArrayList<>();
             list.add(Order.InfoOptions.Date);
@@ -347,7 +348,7 @@ public class SuperMarketUI {
             itemQuantity = order.getItemsQuantity().get(item);
             System.out.println("Item price: " + itemPrice);
             System.out.println("Item quantity: " + itemQuantity);
-            System.out.println("Item total price: " + String.valueOf(((itemPrice * itemQuantity)* 1000d) / 1000d) +"\n");
+            System.out.println("Item total price: " + ((itemPrice * itemQuantity) * 1000d) / 1000d +"\n");
         }
         for(Store store: order.getStoresToOrderFrom().keySet())
             printDistanceAndPPK(store, order);
@@ -359,7 +360,7 @@ public class SuperMarketUI {
         order.setDeliveryDistance(Math.sqrt((clientLocation.x - storeLocation.x) *(clientLocation.x - storeLocation.x)
                 + (clientLocation.y - storeLocation.y) *(clientLocation.y - storeLocation.y)));
         order.setShipmentPrice(order.getDeliveryDistance() * store.getDeliveryPpk());
-        System.out.println("\n\nDistance from " + String.valueOf(store.getName()) + " store: " + order.getDeliveryDistance());
+        System.out.println("\n\nDistance from " + store.getName() + " store: " + order.getDeliveryDistance());
         System.out.println("PPK of store: " + store.getDeliveryPpk());
         System.out.println("Shipment total price: " + (double)Math.round(  order.getShipmentPrice() * 1000d) / 1000d);
 
@@ -368,13 +369,13 @@ public class SuperMarketUI {
     private void showHistory() {
         if(systemManager.isXmlLoaded()){
             HashMap<Integer,Order> allOrders =  systemManager.getSuperMarket().getOrders();
-
+            System.out.println("History orders \n");
             for(Order order: allOrders.values()) {
                 System.out.println("________");
                 List<Order.InfoOptions> list = new ArrayList<>();
                 list.add(Order.InfoOptions.OrderId);
                 list.add(Order.InfoOptions.Date);
-                //list.add(Order.InfoOptions.StoreNameAndId);
+                list.add(Order.InfoOptions.StoresThatSupplyTheOrder);
                 list.add(Order.InfoOptions.AmountOfKindsOfItems);
                 list.add(Order.InfoOptions.AmountOfAllItems);
                 list.add(Order.InfoOptions.ItemsPrice);

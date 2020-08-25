@@ -8,7 +8,7 @@ import java.awt.*;
 public class Order {
 
     public enum InfoOptions {
-        OrderId, Date, ItemsPrice, ShipmentPrice, TotalPrice, DeliveryDistance, AmountOfKindsOfItems, AmountOfAllItems;
+        OrderId, Date, ItemsPrice, ShipmentPrice, TotalPrice, DeliveryDistance, AmountOfKindsOfItems, AmountOfAllItems, StoresThatSupplyTheOrder;
         public String getInfo(Order order) {
 
             switch (this) {
@@ -28,11 +28,14 @@ public class Order {
                     return String.valueOf(order.getAmountOfKindsOfItems());
                 case AmountOfAllItems:
                     return String.valueOf(order.getAmountOfAllItems());
+                case StoresThatSupplyTheOrder:
+                    return order.getStoresAsString();
                 default:
                     return "Unknown";
             }
         }
     }
+
 
     private Integer orderNumber;
     private HashMap<Store, List<Sell>> storesToOrderFrom = new HashMap<Store, List<Sell>>();
@@ -59,6 +62,13 @@ public class Order {
         subOrder.setItemsPrice(itemPrice);
         store.addToTotalEarning(itemPrice + subOrder.getShipmentPrice());
         return subOrder;
+    }
+
+    private String getStoresAsString() {
+        String stores = "";
+        for (Store store : storesToOrderFrom.keySet())
+            stores += store.getName() + " " + store.getId() + " ";
+        return  stores;
     }
 
     public double getItemPrice(Integer itemID) {
