@@ -1,16 +1,14 @@
 package SDMModel;
 
+import java.util.*;
+import java.util.List;
+
 import java.awt.*;
-import java.util.Date;
-import java.util.HashMap;
 
 public class Order {
 
-
     public enum InfoOptions {
-        OrderId, Date, StoreNameAndId, ItemsPrice, ShipmentPrice, TotalPrice, DeliveryDistance, AmountOfKindsOfItems, AmountOfAllItems;
-
-
+        OrderId, Date, ItemsPrice, ShipmentPrice, TotalPrice, DeliveryDistance, AmountOfKindsOfItems, AmountOfAllItems;
         public String getInfo(Order order) {
 
             switch (this) {
@@ -18,8 +16,6 @@ public class Order {
                     return order.getDateOfOrder().toString();
                 case OrderId:
                     return String.valueOf(order.getOrderNumber());
-                case StoreNameAndId:
-                    return order.getStoreToOrderFrom().getName() +", " +String.valueOf(order.getStoreToOrderFrom().getId());
                 case ShipmentPrice:
                     return String.valueOf(order.getShipmentPrice());
                 case ItemsPrice:
@@ -38,46 +34,93 @@ public class Order {
         }
     }
 
-    private double getAmountOfAllItems() {
-        return itemsQuantity.values().stream().mapToDouble(i->i).sum();
+    private Integer orderNumber;
+    private HashMap<Store, List<Sell>> storesToOrderFrom = new HashMap<Store, List<Sell>>();
+    private Point locationOfClient;
+    private HashMap<Item , Double> itemsQuantity = new  HashMap<Item ,Double>();
+    private Date dateOfOrder;
+    private Double itemsPrice = 0.0;
+    private double deliveryDistance;
+    private Double shipmentPrice;
+
+    public static Order crateSubOrder(Store store, Order order, Collection<Item> items){
+        Order subOrder = new Order();
+        subOrder.setDateOfOrder(order.getDateOfOrder());
+        subOrder.setOrderNumber(order.getOrderNumber());
+        subOrder.getStoresToOrderFrom().put(store, order.getStoresToOrderFrom().get(store));
+        subOrder.setLocationOfClient(order.getLocationOfClient());
+        subOrder.calculatAndSetDistance();
+        double itemPrice = 0.0;
+        for (Sell sell : subOrder.getStoresToOrderFrom().get(store)) {
+            Item item = items.stream().filter(itemEl->itemEl.getId()==sell.getItemId()).findAny().get();
+            itemPrice = itemPrice + sell.getPrice() * order.getItemsQuantity().get(item);
+            subOrder.getItemsQuantity().put(item, order.getItemsQuantity().get(item));
+        }
+        subOrder.setItemsPrice(itemPrice);
+        store.addToTotalEarning(itemPrice + subOrder.getShipmentPrice());
+        return subOrder;
+    }
+
+    public double getItemPrice(Integer itemID) {
+        Double itemPrice = 0.0;
+        for(List<Sell> sells:storesToOrderFrom.values()){
+            for(Sell sell:sells)
+                if (sell.getItemId() == itemID)
+                    itemPrice = sell.getPrice();
+        }
+        return itemPrice;
+    }
+
+    public void setItemsPrice(double itemPrice) {
+        this.itemsPrice = itemPrice;
+    }
+
+    public void calculatAndSetDistance() {
+        Point clientLocation = getLocationOfClient();
+        double totalShipmentPrice=0.0;
+        for(Store store: getStoresToOrderFrom().keySet()) {
+            Point storeLocation = store.getLocation();
+            double deliveryDistance = Math.sqrt((clientLocation.x - storeLocation.x) * (clientLocation.x - storeLocation.x)
+                    + (clientLocation.y - storeLocation.y) * (clientLocation.y - storeLocation.y));
+            totalShipmentPrice = totalShipmentPrice + deliveryDistance * store.getDeliveryPpk();
+        }
+        shipmentPrice = totalShipmentPrice;
+    }
+
+    private int getAmountOfAllItems() {
+        double amountOfAllItems = 0.0;
+        for(Item item:itemsQuantity.keySet())
+            if(item.getPurchaseCategory()== Item.PurchaseCategory.WEIGHT)
+                amountOfAllItems++;
+            else
+                amountOfAllItems = amountOfAllItems + itemsQuantity.get(item);
+        return (int)amountOfAllItems;
     }
 
     private int getAmountOfKindsOfItems() {
-        return itemsToOrder.keySet().size();
+        return itemsQuantity.keySet().size();
     }
-
-    private Integer orderNumber;
-    private Store storeToOrderFrom;
-    private HashMap<Integer ,Item> itemsToOrder = new  HashMap<Integer ,Item>();
-    private Point locationOfClient;
-    private HashMap<Integer , Double> itemsQuantity = new  HashMap<Integer ,Double>();
-    private Date dateOfOrder;
-    private Double totalPrice;
 
     public void setDeliveryDistance(double deliveryDistance) {
         this.deliveryDistance = deliveryDistance;
     }
 
-    private Double itemsPrice = 0.0;
-
     public double getDeliveryDistance() {
-        return (double)Math.round( deliveryDistance * 1000d) / 1000d;
+        return (double)Math.round( deliveryDistance * 100.0d) / 100.0d;
     }
 
-    private double deliveryDistance;
     public void increaseOrderTotalPrice(double itemPrice) {
         this.itemsPrice=this.itemsPrice+itemPrice;
     }
 
     public Double getItemsPrice() {
-        return itemsPrice;
+        return (double)Math.round(itemsPrice);
     }
-
-    private Double shipmentPrice;
 
     public Double getShipmentPrice() {
-        return (shipmentPrice * 1000d) / 1000d;
+        return (double)Math.round((shipmentPrice * 100.0d) / 100.0d);
     }
+
     public void setShipmentPrice(Double price) {
         shipmentPrice = price;
     }
@@ -85,22 +128,20 @@ public class Order {
     public void setDateOfOrder(Date dateOfOrder) {
         this.dateOfOrder = dateOfOrder;
     }
-    public void setStore(Store store) {
-        storeToOrderFrom = store;
-    }
 
     public java.util.Date getDateOfOrder() {
         return dateOfOrder;
     }
 
-    public HashMap<Integer, Item> getItemsToOrder() {
-        return itemsToOrder;
-    }
-    public Store getStoreToOrderFrom() {
-        return storeToOrderFrom;
+    public HashMap<Store, List<Sell>> getStoresToOrderFrom() {
+        return storesToOrderFrom;
     }
 
-    public HashMap<Integer, Double> getItemsQuantity() {
+    public void setStoresToOrderFrom(HashMap<Store, List<Sell>> storesToOrderFrom) {
+        this.storesToOrderFrom=storesToOrderFrom;
+    }
+
+    public HashMap<Item, Double> getItemsQuantity() {
         return itemsQuantity;
     }
 
@@ -119,6 +160,5 @@ public class Order {
     public Integer getOrderNumber() {
         return orderNumber;
     }
-
 
 }

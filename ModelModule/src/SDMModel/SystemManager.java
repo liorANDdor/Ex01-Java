@@ -3,7 +3,9 @@ package SDMModel;
 import SDMGenerated.SuperDuperMarketDescriptor;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class SystemManager {
 
@@ -74,7 +76,7 @@ public class SystemManager {
         StringBuilder storeInfo = new StringBuilder();
         for (Store.InfoOptions option : list) {
             storeInfo
-                    .append(option.toString())
+                    .append(String.join(" ", option.toString().split("(?=[A-Z])")))
                     .append(": ").append(option.getInfo(store))
                     .append("\n");
         }
@@ -96,7 +98,7 @@ public class SystemManager {
     }
 
     public void setStoreOfOrderByID(int storeID, Order emptyOrder) {
-        emptyOrder.setStore(superMarket.getStores().get(storeID));
+        emptyOrder.getStoresToOrderFrom().put(superMarket.getStores().get(storeID), new ArrayList<>());
     }
 
     public String getPriceOfItemByStoreId(Item item, int finalStoreID) {
@@ -134,41 +136,40 @@ public class SystemManager {
     }
 
     public void commitOrder(Order order) {
-        Integer  orderNumber = superMarket.getNumberOfOrders() + 1;
+        Integer orderNumber = superMarket.getNumberOfOrders() + 1;
         superMarket.increaseOrderNumber();
         order.setOrderNumber(orderNumber);
-        for(Item item: order.getItemsToOrder().values()){
-            item.increaseNumberOfTimesItemWasSold(order.getItemsQuantity().get(item.getId()));
-            for(Sell sell:order.getStoreToOrderFrom().getItemsToSell()){
-                if (sell.getItemId() == item.getId())
-                    sell.increaseNumberOfTimesItemWasSold(order.getItemsQuantity().get(item.getId()));
-            }
+        order.calculatAndSetDistance();
+        superMarket.addOrder(order);
+        for (Item item : order.getItemsQuantity().keySet()) {
+            item.increaseNumberOfTimesItemWasSold(order.getItemsQuantity().get(item));
         }
-        order.getStoreToOrderFrom().getOrders().put(orderNumber, order);
-        order.getStoreToOrderFrom().addToEarning(order.getItemsPrice());
+        for (Map.Entry<Store, List<Sell>> entry : order.getStoresToOrderFrom().entrySet()) {
+            Order subOrder = Order.crateSubOrder(entry.getKey(), order,  superMarket.getItems().values());
+            entry.getKey().addOrder(orderNumber, subOrder);
+        }
+
     }
 
-    public void addAnItemToOrder(Order order, int storeId, int itemId, double quantity) {
-       if  (order.getItemsToOrder().containsKey(itemId)){
-           order.getItemsQuantity().put(itemId, (order.getItemsQuantity().get(itemId) + quantity));
+    public void addAnItemToOrder(Order order, Store store, int itemId, double quantity) {
+        Item item = superMarket.getItemByID(itemId);
+        if  (order.getItemsQuantity().containsKey(item)){
+            order.getItemsQuantity().put(item, (order.getItemsQuantity().get(item) + quantity));
         }
         else {
-           order.getItemsToOrder().put(itemId, superMarket.getItemByID(itemId));
-           order.getItemsQuantity().put(itemId, quantity);
-       }
-        double itemPrice = superMarket.getStores().get(storeId).getItemPrice(itemId);
+            if(order.getStoresToOrderFrom().containsKey(store)){
+                order.getStoresToOrderFrom().get(store).add(store.getSellById(itemId));
+            }
+            else {
+                order.getStoresToOrderFrom().put(store, new ArrayList<Sell> ());
+                order.getStoresToOrderFrom().get(store).add(store.getSellById(itemId));
+            }
+            order.getItemsQuantity().put(item, quantity);
+        }
+        store.getSellById(itemId).increaseNumberOfTimesItemWasSold(quantity);
+        double itemPrice = superMarket.getStores().get(store.getId()).getItemPrice(itemId);
         order.increaseOrderTotalPrice(itemPrice * quantity);
     }
-
-    public void calculateDistance(Order order){
-        Point clientLocation = order.getLocationOfClient();
-        Point storeLocation = order.getStoreToOrderFrom().getLocation();
-        order.setDeliveryDistance(Math.sqrt((clientLocation.x - storeLocation.x) *(clientLocation.x - storeLocation.x)
-                + (clientLocation.y - storeLocation.y) *(clientLocation.y - storeLocation.y)));
-        order.setShipmentPrice(order.getDeliveryDistance() * order.getStoreToOrderFrom().getDeliveryPpk());
-
-    }
-
 
     public void isfixedLocationAndSetToOrder(Point point, Order emptyOrder) throws Exception {
         if(point.x>50||point.x<1||point.y>50||point.y<1)
@@ -186,4 +187,18 @@ public class SystemManager {
                 .stream()
                 .anyMatch(store -> store.getLocation().equals(point));
     }
+
+    public Store getItemLowestPrice(Integer itemId) {
+        Double itemLowstPrice = Double.POSITIVE_INFINITY;
+        Store storeLowestItemPrice = null;
+        for(Store store:superMarket.getStores().values()){
+            if(store.isItemSold(itemId))
+                if(store.getItemPrice(itemId)<itemLowstPrice) {
+                    itemLowstPrice = store.getItemPrice(itemId);
+                    storeLowestItemPrice = store;
+                }
+        }
+        return storeLowestItemPrice;
+    }
+
 }

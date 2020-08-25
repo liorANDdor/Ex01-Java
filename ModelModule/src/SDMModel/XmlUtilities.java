@@ -15,14 +15,12 @@ public class XmlUtilities {
     public String getWhatWrongMessage() {
         return whatWrongMessage;
     }
-
     private String whatWrongMessage ="";
+    private boolean isXmlOk = true;
 
     public boolean getIsXmlOk() {
         return isXmlOk;
     }
-
-    private boolean isXmlOk = true;
 
     public SuperDuperMarketDescriptor loadFile(String fullPath) {
         SuperDuperMarketDescriptor instance = null;
