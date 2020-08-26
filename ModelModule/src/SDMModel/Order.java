@@ -54,10 +54,13 @@ public class Order implements Serializable {
         subOrder.getStoresToOrderFrom().put(store, order.getStoresToOrderFrom().get(store));
         subOrder.setLocationOfClient(order.getLocationOfClient());
         subOrder.calculatAndSetDistance();
+
         double itemPrice = 0.0;
         for (Sell sell : subOrder.getStoresToOrderFrom().get(store)) {
+            Sell sellOfStore = store.getSellById(sell.getItemId());
             Item item = items.stream().filter(itemEl->itemEl.getId()==sell.getItemId()).findAny().get();
             itemPrice = itemPrice + sell.getPrice() * order.getItemsQuantity().get(item);
+            sellOfStore.increaseNumberOfTimesItemWasSold(order.getItemsQuantity().get(item));
             subOrder.getItemsQuantity().put(item, order.getItemsQuantity().get(item));
         }
         subOrder.setItemsPrice(itemPrice);

@@ -9,7 +9,7 @@ import java.util.List;
 public class SystemManager {
 
     private SuperMarket superMarket;
-    private XmlUtilities xmlUtilities = new XmlUtilities();
+    private XmlUtilities xmlUtilities;
     private boolean thereIsXmlLoaded = false;
 
     public XmlUtilities getXmlUtilities() {
@@ -167,7 +167,7 @@ public class SystemManager {
             }
             order.getItemsQuantity().put(item, quantity);
         }
-        store.getSellById(itemId).increaseNumberOfTimesItemWasSold(quantity);
+
         double itemPrice = superMarket.getStores().get(store.getId()).getItemPrice(itemId);
         order.increaseOrderTotalPrice(itemPrice * quantity);
     }
@@ -204,10 +204,13 @@ public class SystemManager {
 
     public void loadOrders(String fullPath) {
         HashMap<Integer, Order > orders = xmlUtilities.ReadDataFromFile(fullPath);
+        if(orders.size() != 0){
         for(Order order:orders.values()){
             if(!superMarket.getOrders().containsKey(order.getOrderNumber()))
             commitOrder(order);
-        }
+        }}
+        else
+            System.out.println("No orders found");
     }
 
     public void saveOrders(String fullPath) {

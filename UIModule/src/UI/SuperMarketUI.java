@@ -68,19 +68,37 @@ public class SuperMarketUI {
                     showHistory();
                     break;
                 case SaveOrders:
-                    System.out.println("Please enter full path to which we will save the file:");
-                    String fullPathToSave = scanner.nextLine();
-                    systemManager.saveOrders(fullPathToSave);
+                    saveOrders();
                     break;
                 case LoadOrders:
-                    System.out.println("Please enter full path from which we will load the file:");
-                    String fullPathToLoad = scanner.nextLine();
-                    systemManager.loadOrders(fullPathToLoad);
+                    loadOrders();
                     break;
             }
 
         } while (!userSelection.equals(eMainMenu.Exit)) ;
 
+    }
+
+    private void saveOrders() {
+        if(systemManager.isXmlLoaded()) {
+            System.out.println("Please enter full path to which we will save the file:");
+            String fullPathToSave = scanner.nextLine();
+            systemManager.saveOrders(fullPathToSave);
+        }
+        else {
+            System.out.println("Need to load XML first");
+        }
+    }
+
+    private void loadOrders(){
+        if(systemManager.isXmlLoaded()) {
+            System.out.println("Please enter full path from which we will load the file:");
+            String fullPathToLoad = scanner.nextLine();
+            systemManager.loadOrders(fullPathToLoad);
+        }
+        else {
+            System.out.println("Need to load XML first");
+        }
     }
 
     private void showStores() {
