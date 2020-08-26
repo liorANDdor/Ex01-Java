@@ -67,10 +67,11 @@ public class XmlUtilities {
             orders =(HashMap<Integer, Order>) in.readObject();
 
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Cannot find file");
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            System.out.println("Cannot find file");
         }
+
         return orders;
 
     }
