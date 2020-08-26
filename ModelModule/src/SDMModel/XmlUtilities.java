@@ -44,11 +44,11 @@ public class XmlUtilities {
     }
 
 
-    public void WriteDataToFile(HashMap<Integer, Order> orders) {
+    public void WriteDataToFile(String fullPath, HashMap<Integer, Order> orders) {
 
         try (ObjectOutputStream out =
                      new ObjectOutputStream(
-                             new FileOutputStream("/Users/dor.cohen/Downloads/aamyorders.txt"))) {
+                             new FileOutputStream(fullPath))) {
             out.writeObject(orders);
 
             out.flush();
@@ -58,11 +58,11 @@ public class XmlUtilities {
 
     }
 
-    public HashMap<Integer, Order> ReadDataFromFile()
+    public HashMap<Integer, Order> ReadDataFromFile(String fullPath)
     {
         HashMap<Integer, Order> orders = new HashMap<Integer, Order>();
         try (ObjectInputStream in = new ObjectInputStream(
-                new FileInputStream("/Users/dor.cohen/Downloads/aamyorders.txt"))) {
+                new FileInputStream(fullPath))) {
             // we know that we read array list of Persons
             orders =(HashMap<Integer, Order>) in.readObject();
 

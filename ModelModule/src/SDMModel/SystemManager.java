@@ -3,10 +3,8 @@ package SDMModel;
 import SDMGenerated.SuperDuperMarketDescriptor;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 public class SystemManager {
 
@@ -23,6 +21,7 @@ public class SystemManager {
     }
 
     public void LoadXMLFileAndCheckIt(String fullPath) {
+        xmlUtilities = new XmlUtilities();
         xmlUtilities.isNameOfFileCorrect(fullPath);
         SuperDuperMarketDescriptor superMarketSDM = xmlUtilities.loadFile(fullPath);
         xmlUtilities.checkIfTheXmlThatJustLoadedOk(superMarketSDM);
@@ -141,7 +140,8 @@ public class SystemManager {
         order.setOrderNumber(orderNumber);
         order.calculatAndSetDistance();
         superMarket.addOrder(order);
-        for (Item item : order.getItemsQuantity().keySet()) {
+        for (Item itemFromXml : order.getItemsQuantity().keySet()) {
+            Item item = superMarket.getItemByID(itemFromXml.getId());
             item.increaseNumberOfTimesItemWasSold(order.getItemsQuantity().get(item));
         }
         for (Map.Entry<Store, List<Sell>> entry : order.getStoresToOrderFrom().entrySet()) {
@@ -202,14 +202,16 @@ public class SystemManager {
         return storeLowestItemPrice;
     }
 
-    public void loadOrders() {
-        HashMap<Integer, Order > orders = xmlUtilities.ReadDataFromFile();
+    public void loadOrders(String fullPath) {
+        HashMap<Integer, Order > orders = xmlUtilities.ReadDataFromFile(fullPath);
         for(Order order:orders.values()){
+            if(!superMarket.getOrders().containsKey(order.getOrderNumber()))
             commitOrder(order);
         }
     }
 
-    public void saveOrder() {
-        xmlUtilities.WriteDataToFile(superMarket.getOrders());
+    public void saveOrders(String fullPath) {
+
+        xmlUtilities.WriteDataToFile(fullPath, superMarket.getOrders());
     }
 }

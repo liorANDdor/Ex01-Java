@@ -66,11 +66,16 @@ public class SuperMarketUI {
                     break;
                 case ShowHistory:
                     showHistory();
+                    break;
                 case SaveOrders:
-                    systemManager.saveOrder();
+                    System.out.println("Please enter full path to which we will save the file:");
+                    String fullPathToSave = scanner.nextLine();
+                    systemManager.saveOrders(fullPathToSave);
                     break;
                 case LoadOrders:
-                    systemManager.loadOrders();
+                    System.out.println("Please enter full path from which we will load the file:");
+                    String fullPathToLoad = scanner.nextLine();
+                    systemManager.loadOrders(fullPathToLoad);
                     break;
             }
 
@@ -235,11 +240,13 @@ public class SuperMarketUI {
                 isContinue = false;
 
         }
-        getOrderInfo(emptyOrder);
-        System.out.println("Press Y if you to commit the order");
-        String userWantToCommit = scanner.nextLine();
-        if (userWantToCommit.equals("y") || userWantToCommit.equals("Y")) {
-            systemManager.commitOrder(emptyOrder);
+        if(emptyOrder.getItemsQuantity().size() != 0) {
+            getOrderInfo(emptyOrder);
+            System.out.println("Press Y if you to commit the order");
+            String userWantToCommit = scanner.nextLine();
+            if (userWantToCommit.equals("y") || userWantToCommit.equals("Y")) {
+                systemManager.commitOrder(emptyOrder);
+            }
         }
     }
 
@@ -281,7 +288,7 @@ public class SuperMarketUI {
                 else
                     quantity = IO.getDouble();
                 Store storeToBuyFrom = systemManager.getSuperMarket().getStores().get(storeID);
-                systemManager.addAnItemToOrder(emptyOrder,storeToBuyFrom , itemId, quantity);
+                systemManager.addAnItemToOrder(emptyOrder, storeToBuyFrom, itemId, quantity);
                 System.out.println("Item was added to order");
             } else
                 System.out.println("this item is not an option");
@@ -292,11 +299,13 @@ public class SuperMarketUI {
                 isContinue = false;
 
         }
-        getOrderInfo(emptyOrder);
-        System.out.println("Press Y if you to commit the order");
-        String userWantToCommit = scanner.nextLine();
-        if (userWantToCommit.equals("y") || userWantToCommit.equals("Y"))
-            systemManager.commitOrder(emptyOrder);
+        if (emptyOrder.getItemsQuantity().size() != 0) {
+            getOrderInfo(emptyOrder);
+            System.out.println("Press Y if you to commit the order");
+            String userWantToCommit = scanner.nextLine();
+            if (userWantToCommit.equals("y") || userWantToCommit.equals("Y"))
+                systemManager.commitOrder(emptyOrder);
+        }
     }
 
     private void verifyAndSetLocation(Order order) {
