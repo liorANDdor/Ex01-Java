@@ -2,8 +2,8 @@
 <br>
 
 ## Code by:
-Lior Fridman - 206081085, fridman.lior1@gmail.com
-Dor Cohen - 307939959, doric93@gmail.com
+- Lior Fridman - 206081085, fridman.lior1@gmail.com
+- Dor Cohen - 307939959, doric93@gmail.com
 
 
 
