@@ -4,13 +4,14 @@ import SDMGenerated.SuperDuperMarketDescriptor;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class SystemManager {
 
     private SuperMarket superMarket;
-    private XmlUtilities xmlUtilities;
+    private XmlUtilities xmlUtilities = new XmlUtilities();
     private boolean thereIsXmlLoaded = false;
 
     public XmlUtilities getXmlUtilities() {
@@ -22,7 +23,6 @@ public class SystemManager {
     }
 
     public void LoadXMLFileAndCheckIt(String fullPath) {
-        xmlUtilities = new XmlUtilities();
         xmlUtilities.isNameOfFileCorrect(fullPath);
         SuperDuperMarketDescriptor superMarketSDM = xmlUtilities.loadFile(fullPath);
         xmlUtilities.checkIfTheXmlThatJustLoadedOk(superMarketSDM);
@@ -145,8 +145,9 @@ public class SystemManager {
             item.increaseNumberOfTimesItemWasSold(order.getItemsQuantity().get(item));
         }
         for (Map.Entry<Store, List<Sell>> entry : order.getStoresToOrderFrom().entrySet()) {
-            Order subOrder = Order.crateSubOrder(entry.getKey(), order,  superMarket.getItems().values());
-            entry.getKey().addOrder(orderNumber, subOrder);
+            Store store = superMarket.getStores().get(entry.getKey().getId());
+             Order.crateSubOrder(store, order,  superMarket.getItems().values());
+
         }
 
     }
@@ -201,4 +202,14 @@ public class SystemManager {
         return storeLowestItemPrice;
     }
 
+    public void loadOrders() {
+        HashMap<Integer, Order > orders = xmlUtilities.ReadDataFromFile();
+        for(Order order:orders.values()){
+            commitOrder(order);
+        }
+    }
+
+    public void saveOrder() {
+        xmlUtilities.WriteDataToFile(superMarket.getOrders());
+    }
 }

@@ -1,11 +1,12 @@
 package SDMModel;
 
+import java.io.Serializable;
 import java.util.*;
 import java.util.List;
 
 import java.awt.*;
 
-public class Order {
+public class Order implements Serializable {
 
     public enum InfoOptions {
         OrderId, Date, ItemsPrice, ShipmentPrice, TotalPrice, DeliveryDistance, AmountOfKindsOfItems, AmountOfAllItems, StoresThatSupplyTheOrder;
@@ -46,7 +47,7 @@ public class Order {
     private double deliveryDistance;
     private Double shipmentPrice;
 
-    public static Order crateSubOrder(Store store, Order order, Collection<Item> items){
+    public static void crateSubOrder(Store store, Order order, Collection<Item> items){
         Order subOrder = new Order();
         subOrder.setDateOfOrder(order.getDateOfOrder());
         subOrder.setOrderNumber(order.getOrderNumber());
@@ -61,7 +62,7 @@ public class Order {
         }
         subOrder.setItemsPrice(itemPrice);
         store.addToTotalEarning(itemPrice + subOrder.getShipmentPrice());
-        return subOrder;
+        store.getOrders().put(order.getOrderNumber(), order);
     }
 
     private String getStoresAsString() {
@@ -170,5 +171,14 @@ public class Order {
     public Integer getOrderNumber() {
         return orderNumber;
     }
+    @Override
+    public int hashCode() {
+        return this.getOrderNumber();
+    }
 
+    @Override
+    public boolean equals(Object o)
+    {
+        return o.hashCode()==this.hashCode() ;
+    }
 }

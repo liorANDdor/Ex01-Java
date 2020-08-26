@@ -4,12 +4,13 @@ import SDMGenerated.SDMSell;
 import SDMGenerated.SDMStore;
 
 import java.awt.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 
-public class Store {
+public class Store implements Serializable {
 
     public enum InfoOptions {
         Name, Id, Location, DeliveryPpk, TotalEarning;
@@ -137,6 +138,15 @@ public class Store {
         }
         return 0; //TODO:ERROR raise
     }
+    @Override
+    public int hashCode() {
+        return this.getId();
+    }
 
+    @Override
+    public boolean equals(Object o)
+    {
+        return o.hashCode()==this.hashCode() ;
+    }
 
 }

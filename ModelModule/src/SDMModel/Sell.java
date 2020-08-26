@@ -3,7 +3,9 @@ package SDMModel;
 
 import SDMGenerated.SDMSell;
 
-public class Sell {
+import java.io.Serializable;
+
+public class Sell implements Serializable {
 
     public enum InfoOptions {
         Price, ID, TimesWasSold;

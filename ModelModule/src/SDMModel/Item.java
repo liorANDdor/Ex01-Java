@@ -4,10 +4,11 @@ package SDMModel;
 import SDMGenerated.SDMItem;
 import com.sun.xml.internal.bind.v2.TODO;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Item {
+public class Item implements Serializable {
     public enum InfoOptions {
         Name, ItemId, Category, NumberOfStoresSellTheItem, ItemAveragePrice, NumberOfTimesItemWasSold;
 
@@ -105,5 +106,14 @@ public class Item {
     public  void increaseNumberOfTimesItemWasSold(double quantity) {
         totalNumberOfTimePurchased +=quantity;
     }
+    @Override
+    public int hashCode() {
+        return this.getId();
+    }
 
+    @Override
+    public boolean equals(Object o)
+    {
+        return o.hashCode()==this.hashCode() ;
+    }
 }

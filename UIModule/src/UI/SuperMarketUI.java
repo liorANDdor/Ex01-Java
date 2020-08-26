@@ -18,6 +18,8 @@ public class SuperMarketUI {
         ShowAllItems,
         CreateAnOrder,
         ShowHistory,
+        SaveOrders,
+        LoadOrders,
         Exit
     }
 
@@ -64,10 +66,14 @@ public class SuperMarketUI {
                     break;
                 case ShowHistory:
                     showHistory();
-
+                case SaveOrders:
+                    systemManager.saveOrder();
                     break;
-
+                case LoadOrders:
+                    systemManager.loadOrders();
+                    break;
             }
+
         } while (!userSelection.equals(eMainMenu.Exit)) ;
 
     }

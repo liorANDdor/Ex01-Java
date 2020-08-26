@@ -7,7 +7,8 @@ import javax.xml.bind.JAXB;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
-import java.io.File;
+import java.io.*;
+import java.util.HashMap;
 import java.util.List;
 
 public class XmlUtilities {
@@ -41,6 +42,40 @@ public class XmlUtilities {
         }
         return instance;
     }
+
+
+    public void WriteDataToFile(HashMap<Integer, Order> orders) {
+
+        try (ObjectOutputStream out =
+                     new ObjectOutputStream(
+                             new FileOutputStream("/Users/dor.cohen/Downloads/aamyorders.txt"))) {
+            out.writeObject(orders);
+
+            out.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public HashMap<Integer, Order> ReadDataFromFile()
+    {
+        HashMap<Integer, Order> orders = new HashMap<Integer, Order>();
+        try (ObjectInputStream in = new ObjectInputStream(
+                new FileInputStream("/Users/dor.cohen/Downloads/aamyorders.txt"))) {
+            // we know that we read array list of Persons
+            orders =(HashMap<Integer, Order>) in.readObject();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return orders;
+
+    }
+
+
 
     public void checkIfTheXmlThatJustLoadedOk(SuperDuperMarketDescriptor superMarketSDM) {
         boolean isContentAsNeeded = true;
